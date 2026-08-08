@@ -3,7 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>HABOS Burger Haus – Direkt bestellen</title>
+<title>HABOS Burger Haus Gelnhausen | Burger bestellen</title>
+<meta name="description" content="HABOS Burger Haus in Gelnhausen: Burger, Smash Burger, Wraps, Wings und Kinder-Menüs. Online auswählen und zur Abholung oder Lieferung bestellen.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://habos-burgerhaus.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="HABOS Burger Haus Gelnhausen">
+<meta property="og:description" content="Burger, Smash Burger, Wraps, Wings und mehr direkt bei HABOS in Gelnhausen bestellen.">
+<meta property="og:url" content="https://habos-burgerhaus.netlify.app/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Restaurant",
+  "name":"HABOS Burger Haus",
+  "url":"https://habos-burgerhaus.netlify.app/",
+  "telephone":"+49 6051 5330842",
+  "email":"Habosburger@outlook.com",
+  "address":{
+    "@type":"PostalAddress",
+    "streetAddress":"Graslitzer Straße 2A",
+    "postalCode":"63571",
+    "addressLocality":"Gelnhausen",
+    "addressCountry":"DE"
+  },
+  "servesCuisine":["Burger","Smash Burger","Wraps","Chicken Wings"],
+  "priceRange":"€€",
+  "hasMenu":"https://habos-burgerhaus.netlify.app/#speisekarte"
+}
+</script>
 <style>
 :root{--yellow:#f6b900;--orange:#ef7b25;--black:#111;--cream:#fff8e8;--gray:#707070;--line:#eadfcb}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff}button{font:inherit;cursor:pointer}
@@ -116,6 +145,9 @@ footer{border-top:4px solid var(--yellow)}
  .hero{padding-top:38px}.head h2{font-size:38px}.tabs{padding-bottom:12px}
 }
 
+
+.soldout{opacity:.58;filter:grayscale(.5);cursor:not-allowed}.soldout .from{color:#a52424}
+.adminlink{color:#777!important;font-size:12px}
 </style>
 </head>
 <body>
@@ -144,7 +176,7 @@ footer{border-top:4px solid var(--yellow)}
   <div><span>🥡</span><h3>Abholung</h3><p>Bequem auswählen und später abholen.</p></div>
   <div><span>🛵</span><h3>Lieferung</h3><p>Eigener Lieferservice rund um Gelnhausen.</p></div>
 </section>
-<footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Hinweis: Impressum, Datenschutz, Allergene/Zusatzstoffe und verbindliche Lieferbedingungen müssen vor öffentlicher Veröffentlichung vollständig hinterlegt sein.</p></footer>
+<footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Burger, Smash Burger, Wraps und mehr in Gelnhausen – zur Abholung oder Lieferung bestellen.</p> <a class="adminlink" href="/admin.html">Admin</a></footer>
 
 <button class="cartbtn" onclick="openCart()">🛒 Warenkorb <span id="count">0</span></button>
 <div class="drawer" id="drawer"><div class="backdrop" onclick="closeCart()"></div><aside class="cart"><div class="carthead"><h2>Warenkorb</h2><button class="close" onclick="closeCart()">×</button></div><div id="cartitems"></div><div class="total">Gesamt: <span id="total">0,00 €</span></div><button class="btn" style="width:100%;margin-top:15px" onclick="openCheckout()">Weiter zur Bestellung</button></aside></div>
@@ -213,8 +245,14 @@ footer{border-top:4px solid var(--yellow)}
 </div>
 
 <script>
-const products=[{"cat": "Burger", "name": "Hamburger", "desc": "Rindfleisch, Salat, Tomate, Zwiebeln, Gurken und Haussoße.", "icon": "🍔", "options": [["Medium 60 g", 4.4], ["Classic 120 g", 6.4], ["Large 160 g", 7.9]], "menu": true}, {"cat": "Burger", "name": "Cheeseburger", "desc": "Rindfleisch, Käse, Salat, Tomate, Zwiebeln, Gurken und Haussoße.", "icon": "🧀", "options": [["Medium 60 g", 4.9], ["Classic 120 g", 6.9], ["Large 160 g", 8.4]], "menu": true}, {"cat": "Burger", "name": "Chili-Cheese Burger", "desc": "Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.", "icon": "🌶️", "options": [["Medium 60 g", 5.4], ["Classic 120 g", 7.4], ["Large 160 g", 8.9]], "menu": true}, {"cat": "Burger", "name": "BBQ Burger", "desc": "Rindfleisch, Käse, Röstzwiebeln und rauchige BBQ-Soße.", "icon": "🔥", "options": [["Medium 60 g", 5.4], ["Classic 120 g", 7.4], ["Large 160 g", 8.9]], "menu": true}, {"cat": "Burger", "name": "Chicken Burger", "desc": "Chicken, Salat, Tomate, Zwiebeln und Haussoße.", "icon": "🍗", "options": [["Classic 120 g", 6.4], ["Large 160 g", 7.9]], "menu": true}, {"cat": "Burger", "name": "Crispy Chicken Burger", "desc": "Knuspriges Chicken, Salat, Tomate und cremige Soße.", "icon": "🍗", "options": [["Classic 120 g", 6.9], ["Large 160 g", 8.4]], "menu": true}, {"cat": "Burger", "name": "Halloumi Burger", "desc": "Halloumi, Salat, Tomate, Zwiebeln und Haussoße.", "icon": "🧀", "options": [["Classic", 6.4], ["Large", 7.9]], "menu": true}, {"cat": "Burger", "name": "Vegan Burger (Falafel)", "desc": "Falafel, frischer Salat, Tomate, Zwiebeln und vegane Soße.", "icon": "🌱", "options": [["Large", 8.9]], "menu": true}, {"cat": "Smash Burger", "name": "Smash Hamburger", "desc": "Gesmashtes Rindfleisch mit Gurken, Zwiebeln und Haussoße.", "icon": "🍔", "options": [["Smash 120 g", 6.4], ["Smash 180 g", 8.9]], "menu": true}, {"cat": "Smash Burger", "name": "Smash Cheeseburger", "desc": "Gesmashtes Rindfleisch, Käse, Gurken, Zwiebeln und Haussoße.", "icon": "🧀", "options": [["Smash 120 g", 7.4], ["Smash 180 g", 9.9]], "menu": true}, {"cat": "Smash Burger", "name": "Smash Chili-Cheese Burger", "desc": "Gesmashtes Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.", "icon": "🌶️", "options": [["Smash 120 g", 7.9], ["Smash 180 g", 10.4]], "menu": true}, {"cat": "Smash Burger", "name": "Smash BBQ Burger", "desc": "Gesmashtes Rindfleisch, Käse, Röstzwiebeln und BBQ-Soße.", "icon": "🔥", "options": [["Smash 120 g", 7.9], ["Smash 180 g", 10.4]], "menu": true}, {"cat": "Wraps", "name": "Falafel Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true}, {"cat": "Wraps", "name": "Halloumi Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true}, {"cat": "Wraps", "name": "Chicken Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true}, {"cat": "Wraps", "name": "Crispy Chicken Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true}, {"cat": "Wraps", "name": "Beef Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true}, {"cat": "Wings", "name": "BBQ Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]]}, {"cat": "Wings", "name": "Teriyaki Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]]}, {"cat": "Wings", "name": "Sweet Chili Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]]}, {"cat": "Wings", "name": "Buffalo Hot Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]]}, {"cat": "Wings", "name": "Garlic Parmesan Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]]}, {"cat": "Nuggets", "name": "Chicken Nuggets", "desc": "Knusprige Chicken Nuggets.", "icon": "🍗", "options": [["6 Stück", 3.9], ["12 Stück", 6.9], ["18 Stück", 10.9]]}, {"cat": "Kinder Menü", "name": "Hamburger Kinder Menü", "desc": "Hamburger 60 g mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.5]]}, {"cat": "Kinder Menü", "name": "Cheeseburger Kinder Menü", "desc": "Cheeseburger 60 g mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.9]]}, {"cat": "Kinder Menü", "name": "Nuggets Burger Kinder Menü", "desc": "Nuggets Burger mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.5]]}, {"cat": "Beilagen", "name": "Pommes", "desc": "Goldgelb und knusprig.", "icon": "🍟", "options": [["Portion", 2.9]]}, {"cat": "Beilagen", "name": "Süßkartoffel-Pommes", "desc": "Knusprige Süßkartoffel-Pommes.", "icon": "🍠", "options": [["Portion", 3.9]]}, {"cat": "Beilagen", "name": "Curly Fries", "desc": "Würzige Kartoffelspiralen.", "icon": "🍟", "options": [["Portion", 3.9]]}, {"cat": "Beilagen", "name": "Onion Rings", "desc": "Knusprige Zwiebelringe.", "icon": "🧅", "options": [["7 Stück", 4.9]]}, {"cat": "Beilagen", "name": "Mozzarella Sticks", "desc": "Knusprig mit cremigem Mozzarella.", "icon": "🧀", "options": [["7 Stück", 4.9]]}, {"cat": "Beilagen", "name": "Chili-Cheese Nuggets", "desc": "Knusprige Nuggets mit Chili-Käse-Füllung.", "icon": "🌶️", "options": [["7 Stück", 4.9]]}, {"cat": "Beilagen", "name": "Nachos + 2 Dips", "desc": "Knusprige Nachos mit zwei Dips.", "icon": "🔺", "options": [["Portion", 3.9]]}, {"cat": "Dips", "name": "Cheese Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Dips", "name": "Chili Mayo", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Dips", "name": "BBQ Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Dips", "name": "Sweet Chili", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Dips", "name": "Garlic Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Dips", "name": "Trüffel Mayo", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]]}, {"cat": "Getränke", "name": "Cola 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Cola Zero 0,33 l", "desc": "Eiskalt, ohne Zucker.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Cola Light 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Fanta 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Sprite 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Mezzo Mix 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]]}, {"cat": "Getränke", "name": "Wasser 0,5 l", "desc": "Still oder sprudelnd.", "icon": "💧", "options": [["0,5 l", 1.9]]}, {"cat": "Getränke", "name": "Ayran 0,25 l", "desc": "Gekühlt.", "icon": "🥛", "options": [["0,25 l", 1.9]]}, {"cat": "Getränke", "name": "Eistee 0,5 l", "desc": "Gekühlt.", "icon": "🧋", "options": [["0,5 l", 3.9]]}, {"cat": "Getränke", "name": "Haus-Limonade 0,5 l", "desc": "Hausgemacht und erfrischend.", "icon": "🍋", "options": [["0,5 l", 3.9]]}];
-const menuPrice=4.50;
+let products=[{"cat": "Burger", "name": "Hamburger", "desc": "Rindfleisch, Salat, Tomate, Zwiebeln, Gurken und Haussoße.", "icon": "🍔", "options": [["Medium 60 g", 4.4], ["Classic 120 g", 6.4], ["Large 160 g", 7.9]], "menu": true, "active": true}, {"cat": "Burger", "name": "Cheeseburger", "desc": "Rindfleisch, Käse, Salat, Tomate, Zwiebeln, Gurken und Haussoße.", "icon": "🧀", "options": [["Medium 60 g", 4.9], ["Classic 120 g", 6.9], ["Large 160 g", 8.4]], "menu": true, "active": true}, {"cat": "Burger", "name": "Chili-Cheese Burger", "desc": "Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.", "icon": "🌶️", "options": [["Medium 60 g", 5.4], ["Classic 120 g", 7.4], ["Large 160 g", 8.9]], "menu": true, "active": true}, {"cat": "Burger", "name": "BBQ Burger", "desc": "Rindfleisch, Käse, Röstzwiebeln und rauchige BBQ-Soße.", "icon": "🔥", "options": [["Medium 60 g", 5.4], ["Classic 120 g", 7.4], ["Large 160 g", 8.9]], "menu": true, "active": true}, {"cat": "Burger", "name": "Chicken Burger", "desc": "Chicken, Salat, Tomate, Zwiebeln und Haussoße.", "icon": "🍗", "options": [["Classic 120 g", 6.4], ["Large 160 g", 7.9]], "menu": true, "active": true}, {"cat": "Burger", "name": "Crispy Chicken Burger", "desc": "Knuspriges Chicken, Salat, Tomate und cremige Soße.", "icon": "🍗", "options": [["Classic 120 g", 6.9], ["Large 160 g", 8.4]], "menu": true, "active": true}, {"cat": "Burger", "name": "Halloumi Burger", "desc": "Halloumi, Salat, Tomate, Zwiebeln und Haussoße.", "icon": "🧀", "options": [["Classic", 6.4], ["Large", 7.9]], "menu": true, "active": true}, {"cat": "Burger", "name": "Vegan Burger (Falafel)", "desc": "Falafel, frischer Salat, Tomate, Zwiebeln und vegane Soße.", "icon": "🌱", "options": [["Large", 8.9]], "menu": true, "active": true}, {"cat": "Smash Burger", "name": "Smash Hamburger", "desc": "Gesmashtes Rindfleisch mit Gurken, Zwiebeln und Haussoße.", "icon": "🍔", "options": [["Smash 120 g", 6.4], ["Smash 180 g", 8.9]], "menu": true, "active": true}, {"cat": "Smash Burger", "name": "Smash Cheeseburger", "desc": "Gesmashtes Rindfleisch, Käse, Gurken, Zwiebeln und Haussoße.", "icon": "🧀", "options": [["Smash 120 g", 7.4], ["Smash 180 g", 9.9]], "menu": true, "active": true}, {"cat": "Smash Burger", "name": "Smash Chili-Cheese Burger", "desc": "Gesmashtes Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.", "icon": "🌶️", "options": [["Smash 120 g", 7.9], ["Smash 180 g", 10.4]], "menu": true, "active": true}, {"cat": "Smash Burger", "name": "Smash BBQ Burger", "desc": "Gesmashtes Rindfleisch, Käse, Röstzwiebeln und BBQ-Soße.", "icon": "🔥", "options": [["Smash 120 g", 7.9], ["Smash 180 g", 10.4]], "menu": true, "active": true}, {"cat": "Wraps", "name": "Falafel Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true, "active": true}, {"cat": "Wraps", "name": "Halloumi Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true, "active": true}, {"cat": "Wraps", "name": "Chicken Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true, "active": true}, {"cat": "Wraps", "name": "Crispy Chicken Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true, "active": true}, {"cat": "Wraps", "name": "Beef Wrap", "desc": "Frisch gerollter Wrap mit Salat und passender HABOS-Soße.", "icon": "🌯", "options": [["Standard", 6.9]], "menu": true, "active": true}, {"cat": "Wings", "name": "BBQ Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]], "active": true}, {"cat": "Wings", "name": "Teriyaki Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]], "active": true}, {"cat": "Wings", "name": "Sweet Chili Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]], "active": true}, {"cat": "Wings", "name": "Buffalo Hot Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]], "active": true}, {"cat": "Wings", "name": "Garlic Parmesan Wings", "desc": "6 knusprige Chicken Wings mit ausgewählter Soße.", "icon": "🍗", "options": [["6 Stück", 6.9]], "active": true}, {"cat": "Nuggets", "name": "Chicken Nuggets", "desc": "Knusprige Chicken Nuggets.", "icon": "🍗", "options": [["6 Stück", 3.9], ["12 Stück", 6.9], ["18 Stück", 10.9]], "active": true}, {"cat": "Kinder Menü", "name": "Hamburger Kinder Menü", "desc": "Hamburger 60 g mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.5]], "active": true}, {"cat": "Kinder Menü", "name": "Cheeseburger Kinder Menü", "desc": "Cheeseburger 60 g mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.9]], "active": true}, {"cat": "Kinder Menü", "name": "Nuggets Burger Kinder Menü", "desc": "Nuggets Burger mit Pommes und Capri-Sun.", "icon": "🧒", "options": [["Komplettes Kinder Menü", 6.5]], "active": true}, {"cat": "Beilagen", "name": "Pommes", "desc": "Goldgelb und knusprig.", "icon": "🍟", "options": [["Portion", 2.9]], "active": true}, {"cat": "Beilagen", "name": "Süßkartoffel-Pommes", "desc": "Knusprige Süßkartoffel-Pommes.", "icon": "🍠", "options": [["Portion", 3.9]], "active": true}, {"cat": "Beilagen", "name": "Curly Fries", "desc": "Würzige Kartoffelspiralen.", "icon": "🍟", "options": [["Portion", 3.9]], "active": true}, {"cat": "Beilagen", "name": "Onion Rings", "desc": "Knusprige Zwiebelringe.", "icon": "🧅", "options": [["7 Stück", 4.9]], "active": true}, {"cat": "Beilagen", "name": "Mozzarella Sticks", "desc": "Knusprig mit cremigem Mozzarella.", "icon": "🧀", "options": [["7 Stück", 4.9]], "active": true}, {"cat": "Beilagen", "name": "Chili-Cheese Nuggets", "desc": "Knusprige Nuggets mit Chili-Käse-Füllung.", "icon": "🌶️", "options": [["7 Stück", 4.9]], "active": true}, {"cat": "Beilagen", "name": "Nachos + 2 Dips", "desc": "Knusprige Nachos mit zwei Dips.", "icon": "🔺", "options": [["Portion", 3.9]], "active": true}, {"cat": "Dips", "name": "Cheese Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Dips", "name": "Chili Mayo", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Dips", "name": "BBQ Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Dips", "name": "Sweet Chili", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Dips", "name": "Garlic Sauce", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Dips", "name": "Trüffel Mayo", "desc": "HABOS Dip.", "icon": "🥣", "options": [["1 Dip", 1.0]], "active": true}, {"cat": "Getränke", "name": "Cola 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Cola Zero 0,33 l", "desc": "Eiskalt, ohne Zucker.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Cola Light 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Fanta 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Sprite 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Mezzo Mix 0,33 l", "desc": "Eiskalt.", "icon": "🥤", "options": [["0,33 l", 2.9]], "active": true}, {"cat": "Getränke", "name": "Wasser 0,5 l", "desc": "Still oder sprudelnd.", "icon": "💧", "options": [["0,5 l", 1.9]], "active": true}, {"cat": "Getränke", "name": "Ayran 0,25 l", "desc": "Gekühlt.", "icon": "🥛", "options": [["0,25 l", 1.9]], "active": true}, {"cat": "Getränke", "name": "Eistee 0,5 l", "desc": "Gekühlt.", "icon": "🧋", "options": [["0,5 l", 3.9]], "active": true}, {"cat": "Getränke", "name": "Haus-Limonade 0,5 l", "desc": "Hausgemacht und erfrischend.", "icon": "🍋", "options": [["0,5 l", 3.9]], "active": true}];
+let menuPrice=4.50;
+let liveSettings={
+  deliveryFee:2.50,
+  minimumDelivery:15.00,
+  phone:'4960515330842',
+  displayPhone:'+49 6051 5330842'
+};
 const sides=[
   {name:'Pommes',add:0},
   {name:'Süßkartoffel-Pommes',add:1.00},
@@ -243,7 +281,7 @@ const extras=[
 const removals=['Ohne Zwiebeln','Ohne Gurken','Ohne Tomate','Ohne Salat','Ohne Haussoße'];
 
 let active='Burger',cart=[],pending=null,selectedSide='',selectedDrink='',selectedExtras=[],selectedRemovals=[];
-const cats=[...new Set(products.map(p=>p.cat))];
+let cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
 const tabs=document.getElementById('tabs'),grid=document.getElementById('grid'),modal=document.getElementById('modal');
 const productOptions=document.getElementById('productOptions'),configBuilder=document.getElementById('configBuilder');
 
@@ -256,10 +294,10 @@ function iconMarkup(p){
 }
 function renderTabs(){tabs.innerHTML=cats.map(c=>`<button data-cat="${c}" class="tab ${c===active?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('')}
 function render(){
-  const list=products.filter(p=>p.cat===active);
+  const list=products.filter(p=>p.cat===active && p.active!==false);
   grid.innerHTML=list.map(p=>{
     const i=products.indexOf(p),min=Math.min(...p.options.map(o=>o[1]));
-    return `<article class="card" onclick="showProduct(${i})"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">ab ${euro(min)}</div></div><button class="choose" aria-label="Auswählen">›</button></article>`;
+    return `<article class="card ${p.soldOut?'soldout':''}" onclick="${p.soldOut?'':`showProduct(${i})`}"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">${p.soldOut?'Heute ausverkauft':'ab '+euro(min)}</div></div><button class="choose" aria-label="Auswählen">${p.soldOut?'×':'›'}</button></article>`;
   }).join('');
 }
 function setCat(c){active=c;renderTabs();render();document.querySelector('#speisekarte').scrollIntoView({block:'start'})}
@@ -389,8 +427,8 @@ function openCart(){drawer.classList.add('open');updateCart()}
 function closeCart(){drawer.classList.remove('open')}
 
 let orderType='Abholung';
-const deliveryFee=2.50;
-const minimumDelivery=15.00;
+let deliveryFee=2.50;
+let minimumDelivery=15.00;
 
 function cartSubtotal(){
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
@@ -451,9 +489,27 @@ function sendWhatsApp(){
   const note=clean(custNote.value);
   if(note) lines.push('',`*Hinweis:* ${note}`);
   lines.push('','Bitte Bestellung kurz bestätigen. Danke!');
-  const url='https://wa.me/4960515330842?text='+encodeURIComponent(lines.join('\n'));
+  const url='https://wa.me/'+(liveSettings.phone||'4960515330842')+'?text='+encodeURIComponent(lines.join('\n'));
   window.open(url,'_blank');
 }
-renderTabs();render();updateCart();
+
+async function loadLiveCatalog(){
+  try{
+    const r=await fetch('/.netlify/functions/catalog',{cache:'no-store'});
+    if(!r.ok) throw new Error('catalog');
+    const cfg=await r.json();
+    if(Array.isArray(cfg.products)) products=cfg.products;
+    if(cfg.settings){
+      liveSettings={...liveSettings,...cfg.settings};
+      menuPrice=Number(cfg.settings.menuPrice ?? menuPrice);
+      deliveryFee=Number(cfg.settings.deliveryFee ?? deliveryFee);
+      minimumDelivery=Number(cfg.settings.minimumDelivery ?? minimumDelivery);
+    }
+    cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
+    if(!cats.includes(active)) active=cats[0]||'Burger';
+  }catch(e){}
+  renderTabs();render();updateCart();
+}
+loadLiveCatalog();
 </script>
 </body></html>
