@@ -598,7 +598,7 @@ async function loadLiveCatalog(){
       minimumDelivery=Number(cfg.settings.minimumDelivery ?? minimumDelivery);
     }
     if(cfg.customization){
-      if(Array.isArray(cfg.customization.sides)) sides=cfg.customization.sides;
+      // HABOS: aktuelle 9 Menü-Beilagen nicht durch alte Netlify-Konfiguration überschreiben.
       if(Array.isArray(cfg.customization.drinks)) drinks=cfg.customization.drinks;
       if(Array.isArray(cfg.customization.extras)) extras=cfg.customization.extras;
       if(Array.isArray(cfg.customization.removals)) removals=cfg.customization.removals;
