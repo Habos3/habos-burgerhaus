@@ -225,10 +225,27 @@ footer{border-top:4px solid var(--yellow)}
         <div class="menu-note" id="sidePriceNote"></div>
       </div>
 
+      <div id="studentMenuOnly" style="display:none">
+        <h3 class="choice-title">1. Classic Burger auswählen</h3>
+        <div class="choice-grid" id="studentBurgerChoices"></div>
+        <h3 class="choice-title">2. Beilage auswählen</h3>
+        <div class="choice-grid" id="studentSideChoices"></div>
+        <div id="studentDipWrap" style="display:none">
+          <h3 class="choice-title">3. Dip auswählen <small style="color:#777;font-weight:600">(1 Dip inklusive)</small></h3>
+          <div class="choice-grid" id="studentDipChoices"></div>
+        </div>
+        <h3 class="choice-title" id="studentDrinkTitle">3. Getränk auswählen</h3>
+        <div class="choice-grid" id="studentDrinkChoices"></div>
+      </div>
+
       <div id="menuOnly">
         <h3 class="choice-title">1. Beilage auswählen</h3>
         <div class="choice-grid" id="sideChoices"></div>
-        <h3 class="choice-title">2. Getränk auswählen</h3>
+        <div id="menuDipWrap" style="display:none">
+          <h3 class="choice-title">2. Dip auswählen <small style="color:#777;font-weight:600">(1 Dip inklusive)</small></h3>
+          <div class="choice-grid" id="menuDipChoices"></div>
+        </div>
+        <h3 class="choice-title" id="menuDrinkTitle">2. Getränk auswählen</h3>
         <div class="choice-grid" id="drinkChoices"></div>
       </div>
 
@@ -271,8 +288,18 @@ let sides=[
 let drinks=[{"name":"Coca-Cola","add":0},{"name":"Coca-Cola Zero","add":0},{"name":"Coca-Cola Light","add":0},{"name":"Fanta","add":0},{"name":"Sprite","add":0},{"name":"Mezzo Mix","add":0},{"name":"Wasser","add":0},{"name":"Ayran","add":0},{"name":"Capri-Sun","add":0},{"name":"HABOS Limonade","add":1.0}];
 let extras=[{"name":"Extra Patty","price":4.0},{"name":"Käse","price":1.0},{"name":"Bacon","price":1.5},{"name":"Ei","price":1.0},{"name":"Jalapeños","price":0.5},{"name":"Karamellzwiebeln","price":1.0},{"name":"Mozzarella Sticks","price":1.0},{"name":"Onion Rings","price":1.0},{"name":"Nachos","price":0.5}];
 let removals=["Ohne Zwiebeln","Ohne Gurken","Ohne Tomate","Ohne Salat","Ohne Haussoße"];
+let includedDips=[
+  'Joppie','Sour Cream','BBQ','Aioli','Trüffel Mayo',
+  'Chili Mayo','Cheese Soße','Guacamole','Ketchup','Mayonnaise'
+];
 
-let active='Burger',cart=[],pending=null,selectedSide='',selectedDrink='',selectedExtras=[],selectedRemovals=[];
+let studentBurgers=[
+  'Hamburger','Cheeseburger','Chili Cheese Burger',
+  'BBQ Burger','Chicken Burger','Crispy Chicken Burger'
+];
+
+
+let active='Burger',cart=[],pending=null,selectedSide='',selectedDrink='',selectedDip='',selectedStudentBurger='',selectedExtras=[],selectedRemovals=[];
 let cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
 const tabs=document.getElementById('tabs'),grid=document.getElementById('grid'),modal=document.getElementById('modal');
 const productOptions=document.getElementById('productOptions'),configBuilder=document.getElementById('configBuilder');
@@ -307,7 +334,7 @@ function menuAllowed(p,o){
   return true;
 }
 function resetConfig(){
-  pending=null;selectedSide='';selectedDrink='';selectedExtras=[];selectedRemovals=[];
+  pending=null;selectedSide='';selectedDrink='';selectedDip='';selectedStudentBurger='';selectedExtras=[];selectedRemovals=[];
 }
 function showProduct(i){
   const p=products[i];
@@ -334,7 +361,13 @@ function showProduct(i){
       </div>`;
     }).join('');
   } else {
-    productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="addSingleDirect(${i},${j})"><b>${o[0]}</b><strong>${euro(o[1])}</strong></button>`).join('');
+    if(p.cat==='Schüler Menü'){
+      productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="startStudentMenu(${i},${j})"><b>${o[0]}</b><strong>${euro(o[1])}</strong></button>`).join('');
+    }else if(p.cat==='Beilagen' && p.name==='Nachos'){
+      productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="startNachosConfig(${i},${j})"><b>${o[0]}</b><strong>${euro(o[1])}</strong></button>`).join('');
+    }else{
+      productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="addSingleDirect(${i},${j})"><b>${o[0]}</b><strong>${euro(o[1])}</strong></button>`).join('');
+    }
   }
   modal.classList.add('open');
 }
@@ -347,12 +380,13 @@ function addSingleDirect(i,j){
 function startConfig(i,j,mode){
   const p=products[i],o=p.options[j];
   pending={i,j,name:p.name,size:o[0],base:o[1],cat:p.cat,mode};
-  selectedSide='';selectedDrink='';selectedExtras=[];selectedRemovals=[];
+  selectedSide='';selectedDrink='';selectedDip='';selectedStudentBurger='';selectedExtras=[];selectedRemovals=[];
   productOptions.style.display='none';
   configBuilder.classList.add('show');
+  studentMenuOnly.style.display='none';
   builderProduct.textContent=p.name+' · '+o[0];
   builderModeText.textContent=mode==='menu'
-    ? 'Menü +4,50 € inklusive Pommes und 1 Getränk'
+    ? 'Menü +4,50 € inklusive Beilage und 1 Getränk'
     : 'Einzeln bestellen und nach Wunsch anpassen';
   menuOnly.style.display=mode==='menu'?'block':'none';
   customOnly.style.display=canCustomize(p)?'block':'none';
@@ -362,15 +396,71 @@ function startConfig(i,j,mode){
   confirmConfig.textContent=mode==='menu'?'Menü in den Warenkorb':'In den Warenkorb';
   renderConfiguration();
 }
+
+function startStudentMenu(i,j){
+  const p=products[i],o=p.options[j];
+  pending={i,j,name:p.name,size:o[0],base:o[1],cat:p.cat,mode:'student'};
+  selectedSide='';selectedDrink='';selectedDip='';selectedStudentBurger='';selectedExtras=[];selectedRemovals=[];
+  productOptions.style.display='none';
+  configBuilder.classList.add('show');
+  menuOnly.style.display='none';
+  customOnly.style.display='none';
+  studentMenuOnly.style.display='block';
+  builderProduct.textContent='Schüler Menü · bis 15 Uhr';
+  builderModeText.textContent='Classic Burger + Beilage + Getränk · 9,90 €';
+  sidePriceNote.textContent='Wähle zuerst deinen Classic Burger.';
+  confirmConfig.textContent='Schüler Menü in den Warenkorb';
+  renderConfiguration();
+}
+
+function startNachosConfig(i,j){
+  const p=products[i],o=p.options[j];
+  pending={i,j,name:p.name,size:o[0],base:o[1],cat:p.cat,mode:'nachos'};
+  selectedSide='';selectedDrink='';selectedDip='';selectedStudentBurger='';selectedExtras=[];selectedRemovals=[];
+  productOptions.style.display='none';
+  configBuilder.classList.add('show');
+  menuOnly.style.display='none';
+  studentMenuOnly.style.display='none';
+  customOnly.style.display='none';
+  builderProduct.textContent='Nachos · '+o[0];
+  builderModeText.textContent='1 Dip nach Wahl ist inklusive';
+  sidePriceNote.textContent='Bitte deinen Dip auswählen.';
+  confirmConfig.textContent='Nachos in den Warenkorb';
+  renderConfiguration();
+}
 function renderConfiguration(){
-  sideChoices.innerHTML=sides.map(x=>`<button class="choice ${selectedSide===x.name?'selected':''}" onclick="chooseSide('${x.name}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
-  drinkChoices.innerHTML=drinks.map(x=>`<button class="choice ${selectedDrink===x.name?'selected':''}" onclick="chooseDrink('${x.name}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
-  extraChoices.innerHTML=extras.map(x=>`<button class="custom-choice ${selectedExtras.includes(x.name)?'selected':''}" onclick="toggleExtra('${x.name}')">${x.name}<small>+${euro(x.price)}</small></button>`).join('');
-  removeChoices.innerHTML=removals.map(x=>`<button class="custom-choice ${selectedRemovals.includes(x)?'selected':''}" onclick="toggleRemoval('${x}')">${x}<small>kostenlos</small></button>`).join('');
+  sideChoices.innerHTML=sides.map(x=>`<button class="choice ${selectedSide===x.name?'selected':''}" onclick="chooseSide('${x.name.replace(/'/g,"\\'")}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
+  drinkChoices.innerHTML=drinks.map(x=>`<button class="choice ${selectedDrink===x.name?'selected':''}" onclick="chooseDrink('${x.name.replace(/'/g,"\\'")}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
+
+  const menuNeedsDip = pending && pending.mode==='menu' && selectedSide==='Nachos + 1 Dip nach Wahl';
+  menuDipWrap.style.display=menuNeedsDip?'block':'none';
+  menuDrinkTitle.textContent=menuNeedsDip?'3. Getränk auswählen':'2. Getränk auswählen';
+  menuDipChoices.innerHTML=includedDips.map(x=>`<button class="choice ${selectedDip===x?'selected':''}" onclick="chooseDip('${x.replace(/'/g,"\\'")}')">${x}<small>inklusive</small></button>`).join('');
+
+  studentBurgerChoices.innerHTML=studentBurgers.map(name=>{
+    const p=products.find(x=>x.cat==='Burger' && x.name===name);
+    return `<button class="choice ${selectedStudentBurger===name?'selected':''}" onclick="chooseStudentBurger('${name.replace(/'/g,"\\'")}')">${name}<small>Classic 120 g</small></button>`;
+  }).join('');
+  studentSideChoices.innerHTML=sides.map(x=>`<button class="choice ${selectedSide===x.name?'selected':''}" onclick="chooseSide('${x.name.replace(/'/g,"\\'")}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
+  studentDrinkChoices.innerHTML=drinks.map(x=>`<button class="choice ${selectedDrink===x.name?'selected':''}" onclick="chooseDrink('${x.name.replace(/'/g,"\\'")}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
+
+  const studentNeedsDip = pending && pending.mode==='student' && selectedSide==='Nachos + 1 Dip nach Wahl';
+  studentDipWrap.style.display=studentNeedsDip?'block':'none';
+  studentDrinkTitle.textContent=studentNeedsDip?'4. Getränk auswählen':'3. Getränk auswählen';
+  studentDipChoices.innerHTML=includedDips.map(x=>`<button class="choice ${selectedDip===x?'selected':''}" onclick="chooseDip('${x.replace(/'/g,"\\'")}')">${x}<small>inklusive</small></button>`).join('');
+
+  extraChoices.innerHTML=extras.map(x=>`<button class="custom-choice ${selectedExtras.includes(x.name)?'selected':''}" onclick="toggleExtra('${x.name.replace(/'/g,"\\'")}')">${x.name}<small>+${euro(x.price)}</small></button>`).join('');
+  removeChoices.innerHTML=removals.map(x=>`<button class="custom-choice ${selectedRemovals.includes(x)?'selected':''}" onclick="toggleRemoval('${x.replace(/'/g,"\\'")}')">${x}<small>kostenlos</small></button>`).join('');
   previewPrice.textContent=euro(currentPrice());
 }
-function chooseSide(x){selectedSide=x;renderConfiguration()}
+function chooseSide(x){
+  selectedSide=x;
+  if(x!=='Nachos + 1 Dip nach Wahl') selectedDip='';
+  renderConfiguration();
+}
 function chooseDrink(x){selectedDrink=x;renderConfiguration()}
+function chooseDip(x){selectedDip=x;renderConfiguration()}
+function chooseStudentBurger(x){selectedStudentBurger=x;renderConfiguration()}
 function toggleExtra(x){
   selectedExtras=selectedExtras.includes(x)?selectedExtras.filter(v=>v!==x):[...selectedExtras,x];
   renderConfiguration();
@@ -382,6 +472,7 @@ function toggleRemoval(x){
 function currentPrice(){
   if(!pending) return 0;
   let price=pending.base;
+
   if(pending.mode==='menu'){
     price+=menuPrice;
     const side=sides.find(x=>x.name===selectedSide);
@@ -389,26 +480,99 @@ function currentPrice(){
     const drink=drinks.find(x=>x.name===selectedDrink);
     if(drink) price+=drink.add||0;
   }
+
+  if(pending.mode==='student'){
+    const side=sides.find(x=>x.name===selectedSide);
+    if(side) price+=side.add;
+    const drink=drinks.find(x=>x.name===selectedDrink);
+    if(drink) price+=drink.add||0;
+  }
+
   price+=selectedExtras.reduce((sum,name)=>sum+(extras.find(x=>x.name===name)?.price||0),0);
   return price;
 }
 function backToOptions(){
   configBuilder.classList.remove('show');
+  studentMenuOnly.style.display='none';
+  menuOnly.style.display='block';
   productOptions.style.display='block';
   resetConfig();
 }
 function confirmConfigured(){
   if(!pending) return;
-  if(pending.mode==='menu' && (!selectedSide||!selectedDrink)){
-    alert('Bitte zuerst eine Beilage und ein Getränk auswählen.');
+
+  if(pending.mode==='menu'){
+    if(!selectedSide||!selectedDrink){
+      alert('Bitte zuerst eine Beilage und ein Getränk auswählen.');
+      return;
+    }
+    if(selectedSide==='Nachos + 1 Dip nach Wahl' && !selectedDip){
+      alert('Bitte den Dip für die Nachos auswählen.');
+      return;
+    }
+  }
+
+  if(pending.mode==='student'){
+    if(!selectedStudentBurger){
+      alert('Bitte zuerst einen Classic Burger auswählen.');
+      return;
+    }
+    if(!selectedSide||!selectedDrink){
+      alert('Bitte eine Beilage und ein Getränk auswählen.');
+      return;
+    }
+    if(selectedSide==='Nachos + 1 Dip nach Wahl' && !selectedDip){
+      alert('Bitte den Dip für die Nachos auswählen.');
+      return;
+    }
+  }
+
+  if(pending.mode==='nachos' && !selectedDip){
+    alert('Bitte einen Dip auswählen.');
     return;
   }
-  const details=[pending.size];
-  if(pending.mode==='menu') details.push('Menü',selectedSide,selectedDrink);
+
+  let details=[pending.size];
+  let cartName=pending.name;
+
+  if(pending.mode==='menu'){
+    details.push('Menü',selectedSide);
+    if(selectedDip) details.push('Dip: '+selectedDip);
+    details.push(selectedDrink);
+  }
+
+  if(pending.mode==='student'){
+    cartName='Schüler Menü – '+selectedStudentBurger;
+    details=['Classic 120 g',selectedStudentBurger,selectedSide];
+    if(selectedDip) details.push('Dip: '+selectedDip);
+    details.push(selectedDrink,'bis 15 Uhr');
+  }
+
+  if(pending.mode==='nachos'){
+    details=[pending.size,'Dip: '+selectedDip];
+  }
+
   if(selectedExtras.length) details.push('Extras: '+selectedExtras.join(', '));
   if(selectedRemovals.length) details.push(selectedRemovals.join(', '));
-  const key=[pending.name,...details].join('|');
-  addCart({key,name:pending.name,option:details.join(' · '),price:currentPrice(),selection:{name:pending.name,option:pending.size,mode:pending.mode,side:selectedSide,drink:selectedDrink,extras:[...selectedExtras],removals:[...selectedRemovals]}});
+
+  const key=[cartName,...details].join('|');
+  addCart({
+    key,
+    name:cartName,
+    option:details.join(' · '),
+    price:currentPrice(),
+    selection:{
+      name:cartName,
+      option:pending.size,
+      mode:pending.mode,
+      studentBurger:selectedStudentBurger,
+      side:selectedSide,
+      dip:selectedDip,
+      drink:selectedDrink,
+      extras:[...selectedExtras],
+      removals:[...selectedRemovals]
+    }
+  });
 }
 function addCart(item){
   let x=cart.find(x=>x.key===item.key);x?x.qty++:cart.push({...item,qty:1});
