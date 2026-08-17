@@ -110,6 +110,7 @@ header{background:#0b0b0b;color:#fff;border-bottom:3px solid var(--yellow);box-s
 .tab[data-cat="Wings"]::before{content:"🍗"}
 .tab[data-cat="Nuggets"]::before{content:"🟠"}
 .tab[data-cat="Kinder Menü"]::before{content:"🧒"}
+.tab[data-cat="Schüler Menü"]::before{content:"🎓"}
 .tab[data-cat="Beilagen"]::before{content:"🍟"}
 .tab[data-cat="Dips"]::before{content:"🥣"}
 .tab[data-cat="Getränke"]::before{content:"🥤"}
@@ -187,7 +188,7 @@ footer{border-top:4px solid var(--yellow)}
 <div class="order-checkout" id="orderCheckout">
   <div class="checkoutbox">
     <div class="checkouthead"><h2>Bestellung abschließen</h2><button class="close" onclick="closeCheckout()">×</button></div>
-    <div class="launch-note">Die Bestellung wird als fertige Nachricht an HABOS per WhatsApp übergeben. Zahlung erfolgt bei Abholung oder Lieferung. Online-Kartenzahlung ist in dieser Version noch nicht aktiviert.</div>
+    <div class="launch-note">Wähle deine Zahlungsart. Bei Online-Zahlung wirst du sicher zu Stripe weitergeleitet. Nach erfolgreicher Zahlung kannst du die bezahlte Bestellung direkt an HABOS über WhatsApp senden.</div>
     <div class="order-tabs">
       <button class="order-type active" id="pickupBtn" onclick="setOrderType('Abholung')">🥡 Abholung</button>
       <button class="order-type" id="deliveryBtn" onclick="setOrderType('Lieferung')">🛵 Lieferung</button>
@@ -197,7 +198,7 @@ footer{border-top:4px solid var(--yellow)}
       <label>Telefon*<input id="custPhone" inputmode="tel" autocomplete="tel" placeholder="Telefonnummer"></label>
       <label class="wide" id="addressLabel" style="display:none">Lieferadresse*<input id="custAddress" autocomplete="street-address" placeholder="Straße, Hausnummer, PLZ, Ort"></label>
       <label>Gewünschte Zeit<select id="custTime"><option>So schnell wie möglich</option><option>In ca. 30 Minuten</option><option>In ca. 45 Minuten</option><option>In ca. 60 Minuten</option></select></label>
-      <label>Zahlung<select id="custPayment"><option>Bar</option><option>EC-/Kreditkarte vor Ort</option></select></label>
+      <label>Zahlung<select id="custPayment" onchange="updatePaymentButton()"><option value="Bar">Bar bei Abholung/Lieferung</option><option value="EC-/Kreditkarte vor Ort">EC-/Kreditkarte vor Ort</option><option value="Online">Online bezahlen (Karte / Apple Pay / Google Pay)</option></select></label>
       <label class="wide">Hinweis<textarea id="custNote" placeholder="z. B. Klingel defekt, bitte anrufen"></textarea></label>
     </div>
     <div class="order-summary">
@@ -206,7 +207,8 @@ footer{border-top:4px solid var(--yellow)}
       <div class="order-summary-row" id="deliveryRow"><span>Lieferkosten</span><strong id="checkoutDelivery">0,00 €</strong></div>
       <div class="order-summary-row grand"><span>Gesamt</span><strong id="checkoutTotal">0,00 €</strong></div>
     </div>
-    <button class="whatsapp" onclick="sendWhatsApp()">✅ Bestellung per WhatsApp senden</button>
+    <button class="whatsapp" id="checkoutAction" onclick="completeOrder()">✅ Bestellung per WhatsApp senden</button>
+    <div id="paymentHint" style="margin-top:9px;color:#777;font-size:13px;text-align:center"></div>
     <button class="callbtn" onclick="location.href='tel:+4960515330842'">☎ HABOS anrufen</button>
   </div>
 </div>
@@ -247,7 +249,7 @@ footer{border-top:4px solid var(--yellow)}
 </div>
 
 <script>
-let products=[{"cat":"Burger","name":"Hamburger","desc":"Rindfleisch, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍔","options":[["Medium 60 g",4.4],["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Cheeseburger","desc":"Rindfleisch, Käse, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Medium 60 g",4.9],["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Chili Cheese Burger","desc":"Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.","icon":"🌶️","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"BBQ Burger","desc":"Rindfleisch mit BBQ-Soße und Toppings nach Wahl.","icon":"🔥","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"Chicken Burger","desc":"Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Crispy Chicken Burger","desc":"Knuspriges Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Halloumi Burger","desc":"Halloumi, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Vegan Burger (Falafel)","desc":"Falafel, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🌱","options":[["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"HABOS Nacho-Burger","desc":"HABOS Burger mit Nachos und Toppings nach Wahl.","icon":"🍔","options":[["Large 160 g",9.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Hamburger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🍔","options":[["Smash 120 g",7.4],["Smash 180 g",9.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Cheeseburger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🧀","options":[["Smash 120 g",7.9],["Smash 180 g",10.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Chili Cheese Burger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🌶️","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash BBQ Burger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🔥","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Beef Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Chicken Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Crispy Chicken Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Halloumi Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Falafel Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wings","name":"HABOS Hot Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Garlic Parmesan Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"BBQ Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Sweet Chili Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Teriyaki Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Pommes","desc":"Goldgelb und knusprig.","icon":"🍟","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Süßkartoffeln","desc":"Knusprige Süßkartoffel-Pommes.","icon":"🍠","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Curly Fries","desc":"Würzige Kartoffelspiralen.","icon":"🍟","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Onion Rings","desc":"Knusprige Zwiebelringe.","icon":"🧅","options":[["7 Stück",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Mozzarella Sticks","desc":"Knusprige Mozzarella Sticks.","icon":"🧀","options":[["7 Stück",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Nachos","desc":"Mit 1 Dip nach Wahl.","icon":"🔺","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Coleslaw","desc":"Hausgemachter Coleslaw.","icon":"🥗","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Fingerfood","desc":"3 Nuggets, 3 Mozzarella Sticks und 3 Onion Rings.","icon":"🍗","options":[["Portion",5.9]],"menu":false,"active":true},{"cat":"Dips","name":"Joppie","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Sour Cream","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"BBQ","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Aioli","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Trüffel Mayo","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Chili Mayo","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Chili Cheese","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Guacamole","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Ketchup","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Dips","name":"Mayonnaise","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Getränke","name":"Soft Drinks","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Wasser","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Ayran","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.5]],"menu":false,"active":true},{"cat":"Getränke","name":"Capri-Sun","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.0]],"menu":false,"active":true},{"cat":"Getränke","name":"Homemade Lemonade","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",3.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Hamburger Kinder Menü","desc":"Hamburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Cheeseburger Kinder Menü","desc":"Cheeseburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Nugget Burger Kinder Menü","desc":"Nugget Burger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true}];
+let products=[{"cat":"Burger","name":"Hamburger","desc":"Rindfleisch, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍔","options":[["Medium 60 g",4.4],["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Cheeseburger","desc":"Rindfleisch, Käse, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Medium 60 g",4.9],["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Chili Cheese Burger","desc":"Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.","icon":"🌶️","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"BBQ Burger","desc":"Rindfleisch mit BBQ-Soße und Toppings nach Wahl.","icon":"🔥","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"Chicken Burger","desc":"Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Crispy Chicken Burger","desc":"Knuspriges Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Halloumi Burger","desc":"Halloumi, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Vegan Burger (Falafel)","desc":"Falafel, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🌱","options":[["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"HABOS Nacho-Burger","desc":"HABOS Burger mit Nachos und Toppings nach Wahl – ohne Dip.","icon":"🍔","options":[["Large 160 g",9.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Hamburger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🍔","options":[["Smash 120 g",7.4],["Smash 180 g",9.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Cheeseburger","desc":"Saftiger Smash Burger mit Käse, frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🧀","options":[["Smash 120 g",7.9],["Smash 180 g",10.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Chili Cheese Burger","desc":"Saftiger Smash Burger mit Käse, frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🌶️","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash BBQ Burger","desc":"Saftiger Smash Burger mit Käse, frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🔥","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Beef Wrap","desc":"Saftiges Beef mit Salat, Tomaten, Zwiebeln und Gurke, dazu hausgemachte Cocktailsoße und Cheese-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Chicken Wrap","desc":"Chicken mit Salat, Tomaten, Zwiebeln und Gurke, dazu Chili-Mayo und Curry-Mayo.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Crispy Chicken Wrap","desc":"Knuspriges Crispy Chicken mit Salat, Tomaten, Zwiebeln und Gurke, dazu Chili-Mayo und Curry-Mayo.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Halloumi Wrap","desc":"Halloumi mit Salat, Tomaten, Zwiebeln und Gurke, dazu Cocktailsoße und Curry-Mayo.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Falafel Wrap","desc":"Falafel mit Salat, Tomaten, Zwiebeln und Gurke, dazu Guacamole und hausgemachte Cocktailsoße.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wings","name":"HABOS Hot Wings","desc":"Knusprige Chicken Wings.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Garlic Parmesan Wings","desc":"Knusprige Chicken Wings mit Garlic-Parmesan-Geschmack.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"BBQ Wings","desc":"Knusprige Chicken Wings mit BBQ-Geschmack.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Sweet Chili Wings","desc":"Knusprige Chicken Wings mit Sweet-Chili-Geschmack.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Teriyaki Wings","desc":"Knusprige Chicken Wings mit Teriyaki-Geschmack.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Nuggets","name":"Chicken Nuggets","desc":"6er + 1 Dip · 12er + 1 Dip · 18er + 2 Dips.","icon":"🍗","options":[["6 Stück + 1 Dip",3.9],["12 Stück + 1 Dip",6.9],["18 Stück + 2 Dips",10.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Hamburger Kinder Menü","desc":"Hamburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Cheeseburger Kinder Menü","desc":"Cheeseburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Nugget Burger Kinder Menü","desc":"Nugget Burger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true},{"cat":"Beilagen","name":"Pommes","desc":"Goldgelb und knusprig.","icon":"🍟","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Süßkartoffeln","desc":"Knusprige Süßkartoffel-Pommes.","icon":"🍠","options":[["Portion",5.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Curly Fries","desc":"Würzige Kartoffelspiralen.","icon":"🍟","options":[["Portion",5.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Onion Rings","desc":"Knusprige Zwiebelringe.","icon":"🧅","options":[["7 Stück",5.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Mozzarella Sticks","desc":"Knusprige Mozzarella Sticks.","icon":"🧀","options":[["7 Stück",5.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Nachos","desc":"Mit 1 Dip nach Wahl.","icon":"🔺","options":[["Portion + 1 Dip nach Wahl",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Coleslaw","desc":"Hausgemachter Coleslaw.","icon":"🥗","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Chili Cheese Nuggets","desc":"Knusprige Chili-Cheese Nuggets.","icon":"🌶️","options":[["Portion",5.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Fingerfood","desc":"3 Nuggets, 3 Mozzarella Sticks und 3 Onion Rings.","icon":"🍗","options":[["3 Nuggets + 3 Mozzarella Sticks + 3 Onion Rings",7.9]],"menu":false,"active":true},{"cat":"Dips","name":"Joppie","desc":"Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Sour Cream","desc":"Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"BBQ","desc":"Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Aioli","desc":"Hausgemachter HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Trüffel Mayo","desc":"Hausgemachter HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Chili Mayo","desc":"Hausgemachter HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Cheese Soße","desc":"Hausgemachter HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Guacamole","desc":"Hausgemachter HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Ketchup","desc":"Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Dips","name":"Mayonnaise","desc":"Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Getränke","name":"Coca-Cola","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Coca-Cola Zero","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Coca-Cola Light","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Fanta","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Sprite","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Mezzo Mix","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Wasser","desc":"Gekühlt serviert.","icon":"💧","options":[["Getränk",1.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Ayran","desc":"Gekühlt serviert.","icon":"🥛","options":[["Getränk",1.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Capri-Sun","desc":"Gekühlt serviert.","icon":"🧃","options":[["Getränk",1.5]],"menu":false,"active":true},{"cat":"Getränke","name":"HABOS Limonade","desc":"Hausgemacht und erfrischend.","icon":"🍋","options":[["Getränk",3.9]],"menu":false,"active":true},{"cat":"Schüler Menü","name":"Schüler Menü","desc":"Bis 15 Uhr: Classic Burger + Pommes + Getränk.","icon":"🎓","options":[["Komplettes Schüler Menü",9.9]],"menu":false,"active":true}];
 let menuPrice=4.50;
 let liveSettings={
   deliveryFee:2.50,
@@ -255,9 +257,19 @@ let liveSettings={
   phone:'4960515330842',
   displayPhone:'+49 6051 5330842'
 };
-let sides=[{"name":"Pommes","add":0},{"name":"Süßkartoffeln","add":1.0},{"name":"Curly Fries","add":1.0}];
-let drinks=[{"name":"Soft Drinks","add":0},{"name":"Wasser","add":0},{"name":"Ayran","add":0},{"name":"Capri-Sun","add":0},{"name":"Homemade Lemonade","add":1.0}];
-let extras=[{"name":"Extra Patty","price":4.0},{"name":"Käse","price":1.0},{"name":"Jalapeños","price":0.5},{"name":"Karamellzwiebeln","price":1.0},{"name":"Bacon","price":1.5},{"name":"Ei","price":1.0},{"name":"Mozzarella Sticks","price":1.0},{"name":"Onion Rings","price":1.0},{"name":"Nachos","price":0.5}];
+let sides=[
+  {name:'Pommes',add:0},
+  {name:'Süßkartoffeln',add:1.00},
+  {name:'Curly Fries',add:1.00},
+  {name:'Onion Rings (7 Stück)',add:1.00},
+  {name:'Mozzarella Sticks (7 Stück)',add:1.00},
+  {name:'Nachos + 1 Dip nach Wahl',add:0},
+  {name:'Coleslaw',add:0},
+  {name:'Chili Cheese Nuggets',add:1.00},
+  {name:'Fingerfood (3 Nuggets + 3 Mozzarella + 3 Onion Rings)',add:3.00}
+];
+let drinks=[{"name":"Coca-Cola","add":0},{"name":"Coca-Cola Zero","add":0},{"name":"Coca-Cola Light","add":0},{"name":"Fanta","add":0},{"name":"Sprite","add":0},{"name":"Mezzo Mix","add":0},{"name":"Wasser","add":0},{"name":"Ayran","add":0},{"name":"Capri-Sun","add":0},{"name":"HABOS Limonade","add":1.0}];
+let extras=[{"name":"Extra Patty","price":4.0},{"name":"Käse","price":1.0},{"name":"Bacon","price":1.5},{"name":"Ei","price":1.0},{"name":"Jalapeños","price":0.5},{"name":"Karamellzwiebeln","price":1.0},{"name":"Mozzarella Sticks","price":1.0},{"name":"Onion Rings","price":1.0},{"name":"Nachos","price":0.5}];
 let removals=["Ohne Zwiebeln","Ohne Gurken","Ohne Tomate","Ohne Salat","Ohne Haussoße"];
 
 let active='Burger',cart=[],pending=null,selectedSide='',selectedDrink='',selectedExtras=[],selectedRemovals=[];
@@ -283,7 +295,7 @@ function render(){
     return `<article class="card ${p.soldOut?'soldout':''}" onclick="${p.soldOut?'':`showProduct(${i})`}"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">${p.soldOut?'Heute ausverkauft':'ab '+euro(min)}</div></div><button class="choose" aria-label="Auswählen">${p.soldOut?'×':'›'}</button></article>`;
   }).join('');
 }
-function setCat(c){active=c;renderTabs();render();document.querySelector('#speisekarte').scrollIntoView({block:'start'})}
+function setCat(c){active=c;renderTabs();render()}
 
 function canCustomize(p){
   return ['Burger','Smash Burger','Wraps'].includes(p.cat);
@@ -330,7 +342,7 @@ function closeModal(){modal.classList.remove('open')}
 
 function addSingleDirect(i,j){
   const p=products[i],o=p.options[j];
-  addCart({key:p.name+'|'+o[0],name:p.name,option:o[0],price:o[1]});
+  addCart({key:p.name+'|'+o[0],name:p.name,option:o[0],price:o[1],selection:{name:p.name,option:o[0],mode:'single',side:'',drink:'',extras:[],removals:[]}});
 }
 function startConfig(i,j,mode){
   const p=products[i],o=p.options[j];
@@ -345,14 +357,14 @@ function startConfig(i,j,mode){
   menuOnly.style.display=mode==='menu'?'block':'none';
   customOnly.style.display=canCustomize(p)?'block':'none';
   sidePriceNote.textContent=mode==='menu'
-    ? 'Süßkartoffel-Pommes oder Curly Fries kosten jeweils +1,00 €.'
+    ? 'Andere Beilagen können je nach Auswahl einen Aufpreis kosten.'
     : '';
   confirmConfig.textContent=mode==='menu'?'Menü in den Warenkorb':'In den Warenkorb';
   renderConfiguration();
 }
 function renderConfiguration(){
   sideChoices.innerHTML=sides.map(x=>`<button class="choice ${selectedSide===x.name?'selected':''}" onclick="chooseSide('${x.name}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
-  drinkChoices.innerHTML=drinks.map(x=>`<button class="choice ${selectedDrink===x.name?'selected':''}" onclick="chooseDrink('${x.name}')">${x.name}<small>im Menü enthalten</small></button>`).join('');
+  drinkChoices.innerHTML=drinks.map(x=>`<button class="choice ${selectedDrink===x.name?'selected':''}" onclick="chooseDrink('${x.name}')">${x.name}<small>${x.add?('+'+euro(x.add)):'im Menü enthalten'}</small></button>`).join('');
   extraChoices.innerHTML=extras.map(x=>`<button class="custom-choice ${selectedExtras.includes(x.name)?'selected':''}" onclick="toggleExtra('${x.name}')">${x.name}<small>+${euro(x.price)}</small></button>`).join('');
   removeChoices.innerHTML=removals.map(x=>`<button class="custom-choice ${selectedRemovals.includes(x)?'selected':''}" onclick="toggleRemoval('${x}')">${x}<small>kostenlos</small></button>`).join('');
   previewPrice.textContent=euro(currentPrice());
@@ -374,6 +386,8 @@ function currentPrice(){
     price+=menuPrice;
     const side=sides.find(x=>x.name===selectedSide);
     if(side) price+=side.add;
+    const drink=drinks.find(x=>x.name===selectedDrink);
+    if(drink) price+=drink.add||0;
   }
   price+=selectedExtras.reduce((sum,name)=>sum+(extras.find(x=>x.name===name)?.price||0),0);
   return price;
@@ -394,7 +408,7 @@ function confirmConfigured(){
   if(selectedExtras.length) details.push('Extras: '+selectedExtras.join(', '));
   if(selectedRemovals.length) details.push(selectedRemovals.join(', '));
   const key=[pending.name,...details].join('|');
-  addCart({key,name:pending.name,option:details.join(' · '),price:currentPrice()});
+  addCart({key,name:pending.name,option:details.join(' · '),price:currentPrice(),selection:{name:pending.name,option:pending.size,mode:pending.mode,side:selectedSide,drink:selectedDrink,extras:[...selectedExtras],removals:[...selectedRemovals]}});
 }
 function addCart(item){
   let x=cart.find(x=>x.key===item.key);x?x.qty++:cart.push({...item,qty:1});
@@ -428,6 +442,7 @@ function openCheckout(){
   closeCart();
   renderCheckoutSummary();
   orderCheckout.classList.add('open');
+  updatePaymentButton();
 }
 function closeCheckout(){orderCheckout.classList.remove('open')}
 function renderCheckoutSummary(){
@@ -440,38 +455,132 @@ function renderCheckoutSummary(){
   checkoutTotal.textContent=euro(subtotal+fee);
 }
 function clean(v){return String(v||'').trim()}
-function sendWhatsApp(){
+
+function validateCheckoutFields(){
   const name=clean(custName.value),phone=clean(custPhone.value),address=clean(custAddress.value);
-  if(!name||!phone){alert('Bitte Name und Telefonnummer eingeben.');return}
-  if(orderType==='Lieferung'&&!address){alert('Bitte die Lieferadresse eingeben.');return}
+  if(!name||!phone){alert('Bitte Name und Telefonnummer eingeben.');return null}
+  if(orderType==='Lieferung'&&!address){alert('Bitte die Lieferadresse eingeben.');return null}
   const subtotal=cartSubtotal();
   if(orderType==='Lieferung'&&subtotal<minimumDelivery){
-    alert('Für Lieferung beträgt der Mindestbestellwert 15,00 €.');
-    return;
+    alert('Für Lieferung beträgt der Mindestbestellwert '+euro(minimumDelivery)+'.');return null
   }
+  return {name,phone,address,subtotal};
+}
+function updatePaymentButton(){
+  const online=custPayment.value==='Online';
+  checkoutAction.textContent=online?'🔒 Sicher online bezahlen':'✅ Bestellung per WhatsApp senden';
+  paymentHint.textContent=online?'Du wirst zur sicheren Stripe-Zahlungsseite weitergeleitet.':'Zahlung erfolgt bei Abholung oder Lieferung.';
+}
+async function completeOrder(){
+  if(custPayment.value==='Online') return startOnlinePayment();
+  return sendWhatsApp();
+}
+async function startOnlinePayment(){
+  const v=validateCheckoutFields();if(!v)return;
+  checkoutAction.disabled=true;
+  const old=checkoutAction.textContent;checkoutAction.textContent='Zahlung wird vorbereitet …';
+  try{
+    const payload={
+      orderType,
+      customer:{name:v.name,phone:v.phone,address:v.address,time:custTime.value,note:clean(custNote.value)},
+      cart:cart.map(x=>({qty:x.qty,selection:x.selection||{name:x.name,option:(x.option||'').split(' · ')[0],mode:'single',side:'',drink:'',extras:[],removals:[]}}))
+    };
+    const r=await fetch('/.netlify/functions/create-checkout-session',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||'Online-Zahlung konnte nicht gestartet werden.');
+    location.href=data.url;
+  }catch(e){
+    alert(e.message||'Online-Zahlung konnte nicht gestartet werden.');
+    checkoutAction.disabled=false;checkoutAction.textContent=old;
+  }
+}
+
+function sendWhatsApp(){
+  const v=validateCheckoutFields();if(!v)return;
+  const {name,phone,address,subtotal}=v;
   const fee=orderType==='Lieferung'?deliveryFee:0;
   const total=subtotal+fee;
   const orderNo='H'+Date.now().toString().slice(-6);
   const lines=[
-    '🍔 *HABOS BURGER HAUS – NEUE BESTELLUNG*',
-    `Bestellnummer: ${orderNo}`,
+    '🍔 *HABOS BURGER HAUS*',
+    '*NEUE BESTELLUNG*',
     '',
-    `*Bestellart:* ${orderType}`,
-    `*Name:* ${name}`,
-    `*Telefon:* ${phone}`,
+    `*Bestellnummer:* ${orderNo}`,
+    '',
+    orderType==='Lieferung' ? '🛵 *LIEFERUNG*' : '🥡 *ABHOLUNG*',
+    '',
+    '👤 *KUNDE*',
+    name,
+    `📞 ${phone}`
   ];
-  if(orderType==='Lieferung') lines.push(`*Adresse:* ${address}`);
-  lines.push(`*Zeit:* ${custTime.value}`,`*Zahlung:* ${custPayment.value}`,'','*Bestellung:*');
+
+  if(orderType==='Lieferung'){
+    lines.push(`📍 ${address}`);
+  }
+
+  lines.push(
+    '',
+    '⏰ *ZEIT*',
+    custTime.value,
+    '',
+    '💶 *ZAHLUNG*',
+    custPayment.value,
+    '',
+    '━━━━━━━━━━━━━',
+    '*BESTELLUNG*',
+    ''
+  );
+
   cart.forEach(x=>{
-    lines.push(`• ${x.qty}× ${x.name} – ${euro(x.price*x.qty)}`);
-    lines.push(`  ${x.option}`);
+    lines.push(`*${x.qty}× ${x.name} – ${euro(x.price*x.qty)}*`);
+
+    const details=String(x.option||'')
+      .split(' · ')
+      .map(v=>v.trim())
+      .filter(Boolean);
+
+    details.forEach(d=>{
+      if(/^Extras?:/i.test(d)){
+        const extraText=d.replace(/^Extras?:\s*/i,'');
+        extraText.split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>{
+          lines.push(`• Extra: ${v}`);
+        });
+      }else{
+        lines.push(`• ${d}`);
+      }
+    });
+
+    lines.push('');
   });
-  lines.push('',`Warenwert: ${euro(subtotal)}`);
-  if(orderType==='Lieferung') lines.push(`Lieferkosten: ${euro(fee)}`);
-  lines.push(`*Gesamt: ${euro(total)}*`);
+
+  lines.push(
+    '━━━━━━━━━━━━━',
+    `Warenwert: *${euro(subtotal)}*`
+  );
+
+  if(orderType==='Lieferung'){
+    lines.push(`Lieferkosten: *${euro(fee)}*`);
+  }
+
+  lines.push(
+    '',
+    `💰 *GESAMT: ${euro(total)}*`
+  );
+
   const note=clean(custNote.value);
-  if(note) lines.push('',`*Hinweis:* ${note}`);
-  lines.push('','Bitte Bestellung kurz bestätigen. Danke!');
+  if(note){
+    lines.push(
+      '',
+      '📝 *HINWEIS*',
+      note
+    );
+  }
+
+  lines.push(
+    '',
+    'Bitte Bestellung kurz bestätigen. Danke!'
+  );
+
   const url='https://wa.me/'+(liveSettings.phone||'4960515330842')+'?text='+encodeURIComponent(lines.join('\n'));
   window.open(url,'_blank');
 }
