@@ -170,14 +170,14 @@ footer{border-top:4px solid var(--yellow)}
   <div class="sale-strip">
     <div class="sale-pill"><strong>🍔 Menü clever zusammenstellen</strong><span>Beilage und Getränk direkt beim Produkt auswählen.</span></div>
     <div class="sale-pill"><strong>🥡 Abholung</strong><span>Schnell bestellen und im Restaurant abholen.</span></div>
-    <div class="sale-pill"><strong>🚫 Lieferung</strong><span>Momentan nicht verfügbar.</span></div>
+    <div class="sale-pill" id="deliveryStatusPill"><strong>🚫 Lieferung</strong><span>Momentan nicht verfügbar.</span></div>
   </div>
   <div class="tabs" id="tabs"></div><div class="grid" id="grid"></div>
 </section>
 <section class="info" id="service">
   <div><span>🍽️</span><h3>Restaurant</h3><p>Frisch zubereitet direkt bei HABOS genießen.</p></div>
   <div><span>🥡</span><h3>Abholung</h3><p>Bequem auswählen und später abholen.</p></div>
-  <div><span>🚫</span><h3>Lieferung</h3><p>Momentan nicht verfügbar.</p></div>
+  <div id="deliveryInfoCard"><span>🚫</span><h3>Lieferung</h3><p>Momentan nicht verfügbar.</p></div>
 </section>
 <footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Burger, Smash Burger, Wraps und mehr in Gelnhausen – momentan nur zur Abholung bestellen.</p> <a class="adminlink" href="/admin.html">Admin</a></footer>
 
@@ -191,7 +191,7 @@ footer{border-top:4px solid var(--yellow)}
     <div class="launch-note">Wähle deine Zahlungsart. Bei Online-Zahlung wirst du sicher zu Stripe weitergeleitet. Nach erfolgreicher Zahlung kannst du die bezahlte Bestellung direkt an HABOS über WhatsApp senden.</div>
     <div class="order-tabs">
       <button class="order-type active" id="pickupBtn" onclick="setOrderType('Abholung')">🥡 Abholung</button>
-      <button class="order-type" id="deliveryBtn" disabled style="opacity:.45;cursor:not-allowed" title="Momentan nicht verfügbar">🚫 Lieferung momentan nicht verfügbar</button>
+      <button class="order-type" id="deliveryBtn" onclick="setOrderType('Lieferung')">🛵 Lieferung</button>
     </div>
     <div class="checkoutgrid">
       <label>Name*<input id="custName" autocomplete="name" placeholder="Vor- und Nachname"></label>
@@ -299,6 +299,8 @@ let studentBurgers=[
 ];
 
 
+let deliveryEnabled=false;
+let categoryOrder=['Schüler Menü','Burger','Smash Burger','Wraps','Wings','Nuggets','Beilagen','Dips','Getränke','Kinder Menü'];
 let active='Burger',cart=[],pending=null,selectedSide='',selectedDrink='',selectedDip='',selectedStudentBurger='',selectedExtras=[],selectedRemovals=[];
 let cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
 const tabs=document.getElementById('tabs'),grid=document.getElementById('grid'),modal=document.getElementById('modal');
@@ -314,13 +316,13 @@ function iconMarkup(p){
   }
   return isSoftDrink(p)?'<span class="cola-glass" aria-label="Getränkeglas"></span>':p.icon;
 }
-function renderTabs(){tabs.innerHTML=cats.map(c=>`<button data-cat="${c}" class="tab ${c===active?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('')}
-function render(){
-  const list=products.filter(p=>p.cat===active && p.active!==false);
-  grid.innerHTML=list.map(p=>{
-    const i=products.indexOf(p),min=Math.min(...p.options.map(o=>o[1]));
-    return `<article class="card ${p.soldOut?'soldout':''}" onclick="${p.soldOut?'':`showProduct(${i})`}"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">${p.soldOut?'Heute ausverkauft':'ab '+euro(min)}</div></div><button class="choose" aria-label="Auswählen">${p.soldOut?'×':'›'}</button></article>`;
-  }).join('');
+function renderTabs(){
+  const available=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
+  const ordered=[
+    ...categoryOrder.filter(c=>available.includes(c)),
+    ...available.filter(c=>!categoryOrder.includes(c))
+  ];
+  tabs.innerHTML=ordered.map(c=>`<button class="tab ${active===c?'active':''}" data-cat="${c}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</button>`).join('');
 }
 function setCat(c){active=c;renderTabs();render()}
 
@@ -594,24 +596,50 @@ let minimumDelivery=15.00;
 function cartSubtotal(){
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
 }
+function applyDeliveryState(){
+  const pill=document.getElementById('deliveryStatusPill');
+  const info=document.getElementById('deliveryInfoCard');
+
+  if(deliveryEnabled){
+    if(pill) pill.innerHTML='<strong>🛵 Lieferung</strong><span>Lieferbestellung verfügbar.</span>';
+    if(info) info.innerHTML='<span>🛵</span><h3>Lieferung</h3><p>Lieferung ist aktuell verfügbar.</p>';
+    if(deliveryBtn){
+      deliveryBtn.disabled=false;
+      deliveryBtn.style.opacity='1';
+      deliveryBtn.style.cursor='pointer';
+      deliveryBtn.textContent='🛵 Lieferung';
+    }
+  }else{
+    if(pill) pill.innerHTML='<strong>🚫 Lieferung</strong><span>Momentan nicht verfügbar.</span>';
+    if(info) info.innerHTML='<span>🚫</span><h3>Lieferung</h3><p>Momentan nicht verfügbar.</p>';
+    if(deliveryBtn){
+      deliveryBtn.disabled=true;
+      deliveryBtn.style.opacity='.45';
+      deliveryBtn.style.cursor='not-allowed';
+      deliveryBtn.textContent='🚫 Lieferung momentan nicht verfügbar';
+    }
+    if(orderType==='Lieferung') orderType='Abholung';
+  }
+}
+
 function setOrderType(type){
-  if(type==='Lieferung'){
+  if(type==='Lieferung' && !deliveryEnabled){
     alert('Lieferung ist momentan nicht verfügbar. Bitte Abholung wählen.');
     type='Abholung';
   }
-  orderType='Abholung';
-  pickupBtn.classList.add('active');
-  deliveryBtn.classList.remove('active');
-  addressLabel.style.display='none';
+  orderType=type;
+  pickupBtn.classList.toggle('active',type==='Abholung');
+  deliveryBtn.classList.toggle('active',type==='Lieferung');
+  addressLabel.style.display=type==='Lieferung'?'grid':'none';
   renderCheckoutSummary();
 }
 function openCheckout(){
   if(!cart.length){alert('Dein Warenkorb ist leer.');return}
-  orderType='Abholung';
+  if(!deliveryEnabled) orderType='Abholung';
   closeCart();
-  pickupBtn.classList.add('active');
-  deliveryBtn.classList.remove('active');
-  addressLabel.style.display='none';
+  pickupBtn.classList.toggle('active',orderType==='Abholung');
+  deliveryBtn.classList.toggle('active',orderType==='Lieferung');
+  addressLabel.style.display=orderType==='Lieferung'?'grid':'none';
   renderCheckoutSummary();
   orderCheckout.classList.add('open');
   updatePaymentButton();
@@ -764,6 +792,9 @@ async function loadLiveCatalog(){
     const cfg=await r.json();
     if(Array.isArray(cfg.products)) products=cfg.products;
     if(cfg.settings){
+        if(typeof cfg.settings.deliveryEnabled==='boolean') deliveryEnabled=cfg.settings.deliveryEnabled;
+        if(Array.isArray(cfg.settings.categoryOrder) && cfg.settings.categoryOrder.length) categoryOrder=cfg.settings.categoryOrder;
+
       liveSettings={...liveSettings,...cfg.settings};
       menuPrice=Number(cfg.settings.menuPrice ?? menuPrice);
       deliveryFee=Number(cfg.settings.deliveryFee ?? deliveryFee);
@@ -778,7 +809,7 @@ async function loadLiveCatalog(){
     cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
     if(!cats.includes(active)) active=cats[0]||'Burger';
   }catch(e){}
-  renderTabs();render();updateCart();
+  applyDeliveryState();renderTabs();render();updateCart();
 }
 loadLiveCatalog();
 </script>
