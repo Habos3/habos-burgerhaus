@@ -170,16 +170,16 @@ footer{border-top:4px solid var(--yellow)}
   <div class="sale-strip">
     <div class="sale-pill"><strong>🍔 Menü clever zusammenstellen</strong><span>Beilage und Getränk direkt beim Produkt auswählen.</span></div>
     <div class="sale-pill"><strong>🥡 Abholung</strong><span>Schnell bestellen und im Restaurant abholen.</span></div>
-    <div class="sale-pill"><strong>🛵 Lieferung</strong><span>Lieferbestellung ab 15,00 € Warenwert.</span></div>
+    <div class="sale-pill"><strong>🚫 Lieferung</strong><span>Momentan nicht verfügbar.</span></div>
   </div>
   <div class="tabs" id="tabs"></div><div class="grid" id="grid"></div>
 </section>
 <section class="info" id="service">
   <div><span>🍽️</span><h3>Restaurant</h3><p>Frisch zubereitet direkt bei HABOS genießen.</p></div>
   <div><span>🥡</span><h3>Abholung</h3><p>Bequem auswählen und später abholen.</p></div>
-  <div><span>🛵</span><h3>Lieferung</h3><p>Eigener Lieferservice rund um Gelnhausen.</p></div>
+  <div><span>🚫</span><h3>Lieferung</h3><p>Momentan nicht verfügbar.</p></div>
 </section>
-<footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Burger, Smash Burger, Wraps und mehr in Gelnhausen – zur Abholung oder Lieferung bestellen.</p> <a class="adminlink" href="/admin.html">Admin</a></footer>
+<footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Burger, Smash Burger, Wraps und mehr in Gelnhausen – momentan nur zur Abholung bestellen.</p> <a class="adminlink" href="/admin.html">Admin</a></footer>
 
 <button class="cartbtn" onclick="openCart()">🛒 Warenkorb <span id="count">0</span></button>
 <div class="drawer" id="drawer"><div class="backdrop" onclick="closeCart()"></div><aside class="cart"><div class="carthead"><h2>Warenkorb</h2><button class="close" onclick="closeCart()">×</button></div><div id="cartitems"></div><div class="total">Gesamt: <span id="total">0,00 €</span></div><button class="btn" style="width:100%;margin-top:15px" onclick="openCheckout()">Weiter zur Bestellung</button></aside></div>
@@ -191,7 +191,7 @@ footer{border-top:4px solid var(--yellow)}
     <div class="launch-note">Wähle deine Zahlungsart. Bei Online-Zahlung wirst du sicher zu Stripe weitergeleitet. Nach erfolgreicher Zahlung kannst du die bezahlte Bestellung direkt an HABOS über WhatsApp senden.</div>
     <div class="order-tabs">
       <button class="order-type active" id="pickupBtn" onclick="setOrderType('Abholung')">🥡 Abholung</button>
-      <button class="order-type" id="deliveryBtn" onclick="setOrderType('Lieferung')">🛵 Lieferung</button>
+      <button class="order-type" id="deliveryBtn" disabled style="opacity:.45;cursor:not-allowed" title="Momentan nicht verfügbar">🚫 Lieferung momentan nicht verfügbar</button>
     </div>
     <div class="checkoutgrid">
       <label>Name*<input id="custName" autocomplete="name" placeholder="Vor- und Nachname"></label>
@@ -595,15 +595,23 @@ function cartSubtotal(){
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
 }
 function setOrderType(type){
-  orderType=type;
-  pickupBtn.classList.toggle('active',type==='Abholung');
-  deliveryBtn.classList.toggle('active',type==='Lieferung');
-  addressLabel.style.display=type==='Lieferung'?'grid':'none';
+  if(type==='Lieferung'){
+    alert('Lieferung ist momentan nicht verfügbar. Bitte Abholung wählen.');
+    type='Abholung';
+  }
+  orderType='Abholung';
+  pickupBtn.classList.add('active');
+  deliveryBtn.classList.remove('active');
+  addressLabel.style.display='none';
   renderCheckoutSummary();
 }
 function openCheckout(){
   if(!cart.length){alert('Dein Warenkorb ist leer.');return}
+  orderType='Abholung';
   closeCart();
+  pickupBtn.classList.add('active');
+  deliveryBtn.classList.remove('active');
+  addressLabel.style.display='none';
   renderCheckoutSummary();
   orderCheckout.classList.add('open');
   updatePaymentButton();
