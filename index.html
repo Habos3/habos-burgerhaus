@@ -324,6 +324,13 @@ function renderTabs(){
   ];
   tabs.innerHTML=ordered.map(c=>`<button class="tab ${active===c?'active':''}" data-cat="${c}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</button>`).join('');
 }
+function render(){
+  const list=products.filter(p=>p.cat===active && p.active!==false);
+  grid.innerHTML=list.map(p=>{
+    const i=products.indexOf(p),min=Math.min(...p.options.map(o=>o[1]));
+    return `<article class="card ${p.soldOut?'soldout':''}" onclick="${p.soldOut?'':`showProduct(${i})`}"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">${p.soldOut?'Heute ausverkauft':'ab '+euro(min)}</div></div><button class="choose" aria-label="Auswählen">${p.soldOut?'×':'›'}</button></article>`;
+  }).join('');
+}
 function setCat(c){active=c;renderTabs();render()}
 
 function canCustomize(p){
