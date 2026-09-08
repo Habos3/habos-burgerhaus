@@ -172,7 +172,7 @@ async function fetchCfg(){const r=await fetch('/.netlify/functions/catalog',{cac
 async function login(){
  password=$('pw').value.trim();if(!password){show($('loginStatus'),'Passwort eingeben.','err');return}
  try{cfg=await fetchCfg();ensureStructure();$('loginBox').style.display='none';$('adminBox').style.display='block';fillSettings();renderAll();markSaved()}catch(e){show($('loginStatus'),e.message,'err')}
-
+}
 function categories(){
  const used=[...new Set((cfg.products||[]).map(p=>p.cat).filter(Boolean))];
  return [...cfg.settings.categoryOrder.filter(Boolean),...used.filter(c=>!cfg.settings.categoryOrder.includes(c))];
