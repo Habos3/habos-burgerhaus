@@ -194,7 +194,7 @@ footer{border-top:4px solid var(--yellow)}
     </div>
     <div class="checkoutgrid">
       <label>Name*<input id="custName" autocomplete="name" placeholder="Vor- und Nachname"></label>
-      <label>Telefon*<input id="custPhone" inputmode="tel" autocomplete="tel" placeholder="Telefonnummer"></label>
+
       <label class="wide" id="addressLabel" style="display:none">Lieferadresse*<input id="custAddress" autocomplete="street-address" placeholder="Straße, Hausnummer, PLZ, Ort"></label>
       <label>Gewünschte Zeit<select id="custTime"><option>So schnell wie möglich</option><option>In ca. 30 Minuten</option><option>In ca. 45 Minuten</option><option>In ca. 60 Minuten</option></select></label>
       <label>Zahlung<select id="custPayment"><option>Bar</option><option>EC-/Kreditkarte vor Ort</option></select></label>
@@ -207,7 +207,7 @@ footer{border-top:4px solid var(--yellow)}
       <div class="order-summary-row grand"><span>Gesamt</span><strong id="checkoutTotal">0,00 €</strong></div>
     </div>
     <button class="whatsapp" onclick="sendWhatsApp()">✅ Bestellung per WhatsApp senden</button>
-    <button class="callbtn" onclick="location.href='tel:+4960515330842'">☎ HABOS anrufen</button>
+   
   </div>
 </div>
 
@@ -441,8 +441,8 @@ function renderCheckoutSummary(){
 }
 function clean(v){return String(v||'').trim()}
 async function sendWhatsApp(){
-  const name=clean(custName.value),phone=clean(custPhone.value),address=clean(custAddress.value);
-  if(!name||!phone){alert('Bitte Name und Telefonnummer eingeben.');return}
+const name=clean(custName.value),address=clean(custAddress.value);
+if(!name){alert('Bitte Name eingeben.');return}
   if(orderType==='Lieferung'&&!address){alert('Bitte die Lieferadresse eingeben.');return}
   const subtotal=cartSubtotal();
   if(orderType==='Lieferung'&&subtotal<minimumDelivery){
@@ -459,7 +459,7 @@ const shortOrderNo=orderNo.slice(-3);
     '',
     `*Bestellart:* ${orderType}`,
     `*Name:* ${name}`,
-    `*Telefon:* ${phone}`,
+   
   ];
   if(orderType==='Lieferung') lines.push(`*Adresse:* ${address}`);
   lines.push(`*Zeit:* ${custTime.value}`,`*Zahlung:* ${custPayment.value}`,'','*Bestellung:*');
@@ -483,7 +483,7 @@ const shortOrderNo=orderNo.slice(-3);
       orderNo: orderNo,
       shortOrderNo: shortOrderNo,
       name: name,
-      phone: phone,
+    phone: '',
       orderType: orderType,
       address: orderType === 'Lieferung' ? address : '',
       total: total,
