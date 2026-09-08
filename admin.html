@@ -71,6 +71,17 @@ textarea{min-height:80px;resize:vertical}
    <label class="field">Menü-Aufpreis €<input id="menuPrice" type="number" step=".10"></label>
    <label class="field">Lieferkosten €<input id="deliveryFee" type="number" step=".10"></label>
    <label class="field">Mindestbestellwert Lieferung €<input id="minimumDelivery" type="number" step=".10"></label>
+   <label class="field">0–3 km Mindestbestellwert €<input id="zone1Min" type="number" step=".10"></label>
+<label class="field">0–3 km Lieferkosten €<input id="zone1Fee" type="number" step=".10"></label>
+
+<label class="field">3–6 km Mindestbestellwert €<input id="zone2Min" type="number" step=".10"></label>
+<label class="field">3–6 km Lieferkosten €<input id="zone2Fee" type="number" step=".10"></label>
+
+<label class="field">6–9 km Mindestbestellwert €<input id="zone3Min" type="number" step=".10"></label>
+<label class="field">6–9 km Lieferkosten €<input id="zone3Fee" type="number" step=".10"></label>
+
+<label class="field">9–12 km Mindestbestellwert €<input id="zone4Min" type="number" step=".10"></label>
+<label class="field">9–12 km Lieferkosten €<input id="zone4Fee" type="number" step=".10"></label>
    <label class="field">Schüler-Menü ab<input id="studentStart" type="time"></label>
    <label class="field">Schüler-Menü bis<input id="studentEnd" type="time"></label>
    <label class="field">Hinweis oben<input id="topBanner"></label>
@@ -150,12 +161,18 @@ function ensureStructure(){
  cfg.customization.removals=Array.isArray(cfg.customization.removals)?cfg.customization.removals:[];
  cfg.customization.dips=Array.isArray(cfg.customization.dips)?cfg.customization.dips:['Joppie','Sour Cream','BBQ','Aioli','Trüffel Mayo','Chili Mayo','Cheese Soße','Guacamole','Ketchup','Mayonnaise'];
  cfg.customization.studentBurgers=Array.isArray(cfg.customization.studentBurgers)?cfg.customization.studentBurgers:['Hamburger','Cheeseburger','Chili Cheese Burger','BBQ Burger','Chicken Burger','Crispy Chicken Burger'];
+cfg.settings.deliveryZones=Array.isArray(cfg.settings.deliveryZones)?cfg.settings.deliveryZones:[
+ {minKm:0,maxKm:3,minimumOrder:15,deliveryFee:1.5},
+ {minKm:3,maxKm:6,minimumOrder:20,deliveryFee:2},
+ {minKm:6,maxKm:9,minimumOrder:30,deliveryFee:2.5},
+ {minKm:9,maxKm:12,minimumOrder:50,deliveryFee:3.5}
+];
 }
 async function fetchCfg(){const r=await fetch('/.netlify/functions/catalog',{cache:'no-store'});if(!r.ok)throw new Error('Konfiguration konnte nicht geladen werden.');return r.json()}
 async function login(){
  password=$('pw').value.trim();if(!password){show($('loginStatus'),'Passwort eingeben.','err');return}
  try{cfg=await fetchCfg();ensureStructure();$('loginBox').style.display='none';$('adminBox').style.display='block';fillSettings();renderAll();markSaved()}catch(e){show($('loginStatus'),e.message,'err')}
-}
+
 function categories(){
  const used=[...new Set((cfg.products||[]).map(p=>p.cat).filter(Boolean))];
  return [...cfg.settings.categoryOrder.filter(Boolean),...used.filter(c=>!cfg.settings.categoryOrder.includes(c))];
@@ -163,6 +180,14 @@ function categories(){
 function fillSettings(){
  ensureStructure();
  $('menuPrice').value=cfg.settings.menuPrice??4.5;$('deliveryFee').value=cfg.settings.deliveryFee??2.5;$('minimumDelivery').value=cfg.settings.minimumDelivery??15;
+ $('zone1Min').value=cfg.settings.deliveryZones[0].minimumOrder;
+$('zone1Fee').value=cfg.settings.deliveryZones[0].deliveryFee;
+$('zone2Min').value=cfg.settings.deliveryZones[1].minimumOrder;
+$('zone2Fee').value=cfg.settings.deliveryZones[1].deliveryFee;
+$('zone3Min').value=cfg.settings.deliveryZones[2].minimumOrder;
+$('zone3Fee').value=cfg.settings.deliveryZones[2].deliveryFee;
+$('zone4Min').value=cfg.settings.deliveryZones[3].minimumOrder;
+$('zone4Fee').value=cfg.settings.deliveryZones[3].deliveryFee;
  $('phone').value=cfg.settings.phone||'';$('displayPhone').value=cfg.settings.displayPhone||'';$('email').value=cfg.settings.email||'';$('address').value=cfg.settings.address||'';
  $('pickupEnabled').checked=cfg.settings.pickupEnabled!==false;$('deliveryEnabled').checked=cfg.settings.deliveryEnabled===true;
  $('payCash').checked=cfg.settings.paymentMethods.cash!==false;$('payCard').checked=cfg.settings.paymentMethods.card!==false;$('payOnline').checked=cfg.settings.paymentMethods.online===true;
@@ -170,6 +195,12 @@ function fillSettings(){
  $('topBanner').value=cfg.settings.topBanner||'HABOS DIREKTBESTELLUNG · BESTELLUNG PER WHATSAPP';
 }
 function syncFields(){
+ cfg.settings.deliveryZones=[
+ {minKm:0,maxKm:3,minimumOrder:Number($('zone1Min').value)||0,deliveryFee:Number($('zone1Fee').value)||0},
+ {minKm:3,maxKm:6,minimumOrder:Number($('zone2Min').value)||0,deliveryFee:Number($('zone2Fee').value)||0},
+ {minKm:6,maxKm:9,minimumOrder:Number($('zone3Min').value)||0,deliveryFee:Number($('zone3Fee').value)||0},
+ {minKm:9,maxKm:12,minimumOrder:Number($('zone4Min').value)||0,deliveryFee:Number($('zone4Fee').value)||0}
+];
  cfg.settings.menuPrice=Number($('menuPrice').value)||0;cfg.settings.deliveryFee=Number($('deliveryFee').value)||0;cfg.settings.minimumDelivery=Number($('minimumDelivery').value)||0;
  cfg.settings.phone=$('phone').value.trim();cfg.settings.displayPhone=$('displayPhone').value.trim();cfg.settings.email=$('email').value.trim();cfg.settings.address=$('address').value.trim();
  cfg.settings.pickupEnabled=$('pickupEnabled').checked;cfg.settings.deliveryEnabled=$('deliveryEnabled').checked;
