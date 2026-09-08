@@ -412,6 +412,12 @@ function closeCart(){drawer.classList.remove('open')}
 let orderType='Abholung';
 let deliveryFee=2.50;
 let minimumDelivery=15.00;
+  let deliveryZones=[
+ {minKm:0,maxKm:3,minimumOrder:15,deliveryFee:1.5},
+ {minKm:3,maxKm:6,minimumOrder:20,deliveryFee:2},
+ {minKm:6,maxKm:9,minimumOrder:30,deliveryFee:2.5},
+ {minKm:9,maxKm:12,minimumOrder:50,deliveryFee:3.5}
+];ui
 
 function cartSubtotal(){
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
@@ -421,8 +427,19 @@ function setOrderType(type){
   pickupBtn.classList.toggle('active',type==='Abholung');
   deliveryBtn.classList.toggle('active',type==='Lieferung');
   addressLabel.style.display=type==='Lieferung'?'grid':'none';
+  deliveryZoneLabel.style.display=type==='Lieferung'?'grid':'none';
+if(type!=='Lieferung') deliveryZone.value='';
   renderCheckoutSummary();
 }
+  function updateDeliveryZone(){
+  const i=Number(deliveryZone.value);
+  if(deliveryZone.value!=='' && deliveryZones[i]){
+    deliveryFee=Number(deliveryZones[i].deliveryFee)||0;
+    minimumDelivery=Number(deliveryZones[i].minimumOrder)||0;
+  }
+  renderCheckoutSummary();
+}
+deliveryZone.addEventListener('change',updateDeliveryZone);
 function openCheckout(){
   if(!cart.length){alert('Dein Warenkorb ist leer.');return}
   closeCart();
@@ -444,9 +461,11 @@ async function sendWhatsApp(){
 const name=clean(custName.value),address=clean(custAddress.value);
 if(!name){alert('Bitte Name eingeben.');return}
   if(orderType==='Lieferung'&&!address){alert('Bitte die Lieferadresse eingeben.');return}
+  if(orderType==='Lieferung'&&deliveryZone.value===''){alert('Bitte Lieferzone auswählen.');return}
+updateDeliveryZone();
   const subtotal=cartSubtotal();
   if(orderType==='Lieferung'&&subtotal<minimumDelivery){
-    alert('Für Lieferung beträgt der Mindestbestellwert 15,00 €.');
+    alert(`Für diese Lieferzone beträgt der Mindestbestellwert ${euro(minimumDelivery)}.`);
     return;
   }
   const fee=orderType==='Lieferung'?deliveryFee:0;
@@ -462,6 +481,7 @@ const shortOrderNo=orderNo.slice(-3);
    
   ];
   if(orderType==='Lieferung') lines.push(`*Adresse:* ${address}`);
+  if(orderType==='Lieferung') lines.push(`*Lieferzone:* ${deliveryZone.options[deliveryZone.selectedIndex].text}`);
   lines.push(`*Zeit:* ${custTime.value}`,`*Zahlung:* ${custPayment.value}`,'','*Bestellung:*');
   cart.forEach(x=>{
     lines.push(`• ${x.qty}× ${x.name} – ${euro(x.price*x.qty)}`);
@@ -486,6 +506,7 @@ const shortOrderNo=orderNo.slice(-3);
     phone: '',
       orderType: orderType,
       address: orderType === 'Lieferung' ? address : '',
+      deliveryZone: orderType === 'Lieferung' ? deliveryZone.options[deliveryZone.selectedIndex].text : '',
       total: total,
       orderText: lines.join('\n'),
       createdAt: Date.now()
@@ -505,6 +526,7 @@ async function loadLiveCatalog(){
     if(Array.isArray(cfg.products)) products=cfg.products;
     if(cfg.settings){
       liveSettings={...liveSettings,...cfg.settings};
+      if(Array.isArray(cfg.settings.deliveryZones)) deliveryZones=cfg.settings.deliveryZones;
       menuPrice=Number(cfg.settings.menuPrice ?? menuPrice);
       deliveryFee=Number(cfg.settings.deliveryFee ?? deliveryFee);
       minimumDelivery=Number(cfg.settings.minimumDelivery ?? minimumDelivery);
