@@ -726,7 +726,13 @@
   "settings": {
     "menuPrice": 4.5,
     "deliveryFee": 2.5,
-    "minimumDelivery": 15.0,
+"minimumDelivery": 15.0,
+    "deliveryZones": [
+  { "minKm": 0, "maxKm": 3, "minimumOrder": 15, "deliveryFee": 1.5 },
+  { "minKm": 3, "maxKm": 6, "minimumOrder": 20, "deliveryFee": 2.0 },
+  { "minKm": 6, "maxKm": 9, "minimumOrder": 30, "deliveryFee": 2.5 },
+  { "minKm": 9, "maxKm": 12, "minimumOrder": 50, "deliveryFee": 3.5 }
+],
     "phone": "4960515330842",
     "displayPhone": "+49 6051 5330842",
     "email": "Habosburger@outlook.com",
