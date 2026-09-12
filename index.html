@@ -196,6 +196,16 @@ footer{border-top:4px solid var(--yellow)}
       <label>Name*<input id="custName" autocomplete="name" placeholder="Vor- und Nachname"></label>
 
       <label class="wide" id="addressLabel" style="display:none">Lieferadresse*<input id="custAddress" autocomplete="street-address" placeholder="Straße, Hausnummer, PLZ, Ort"></label>
+     <label class="wide" id="deliveryZoneLabel" style="display:none">
+  Lieferzone*
+  <select id="deliveryZone">
+    <option value="">Bitte auswählen</option>
+    <option value="0">0–3 km · Mindestbestellwert 15 € · Lieferung 1,50 €</option>
+    <option value="1">3–6 km · Mindestbestellwert 20 € · Lieferung 2,00 €</option>
+    <option value="2">6–9 km · Mindestbestellwert 30 € · Lieferung 2,50 €</option>
+    <option value="3">9–12 km · Mindestbestellwert 50 € · Lieferung 3,50 €</option>
+  </select>
+</label>
       <label>Gewünschte Zeit<select id="custTime"><option>So schnell wie möglich</option><option>In ca. 30 Minuten</option><option>In ca. 45 Minuten</option><option>In ca. 60 Minuten</option></select></label>
       <label>Zahlung<select id="custPayment"><option>Bar</option><option>EC-/Kreditkarte vor Ort</option></select></label>
       <label class="wide">Hinweis<textarea id="custNote" placeholder="z. B. Klingel defekt, bitte anrufen"></textarea></label>
@@ -417,7 +427,7 @@ let minimumDelivery=15.00;
  {minKm:3,maxKm:6,minimumOrder:20,deliveryFee:2},
  {minKm:6,maxKm:9,minimumOrder:30,deliveryFee:2.5},
  {minKm:9,maxKm:12,minimumOrder:50,deliveryFee:3.5}
-];ui
+];
 
 function cartSubtotal(){
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
