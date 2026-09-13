@@ -437,19 +437,92 @@ function setOrderType(type){
   pickupBtn.classList.toggle('active',type==='Abholung');
   deliveryBtn.classList.toggle('active',type==='Lieferung');
   addressLabel.style.display=type==='Lieferung'?'grid':'none';
-  deliveryZoneLabel.style.display=type==='Lieferung'?'grid':'none';
+  deliveryZoneLabel.style.display='none';
 if(type!=='Lieferung') deliveryZone.value='';
   renderCheckoutSummary();
 }
-  function updateDeliveryZone(){
-  const i=Number(deliveryZone.value);
-  if(deliveryZone.value!=='' && deliveryZones[i]){
+  const HABOS_ADDRESS='Graslitzer Straße 2A, 63571 Gelnhausen, Deutschland';
+let habosCoordsPromise=null;
+let deliveryDistanceKm=null;
+
+async function geocodeAddress(address){
+  const url='https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q='+encodeURIComponent(address);
+  const response=await fetch(url);
+  const data=await response.json();
+
+  if(!data.length) throw new Error('Adresse nicht gefunden');
+
+  return {
+    lat:Number(data[0].lat),
+    lon:Number(data[0].lon)
+  };
+}
+
+function getHabosCoords(){
+  if(!habosCoordsPromise){
+    habosCoordsPromise=geocodeAddress(HABOS_ADDRESS);
+  }
+  return habosCoordsPromise;
+}
+
+async function updateDeliveryZone(){
+  const address=clean(custAddress.value);
+
+  if(orderType!=='Lieferung' || !address){
+    deliveryZone.value='';
+    return false;
+  }
+
+  try{
+    const [habos,kunde]=await Promise.all([
+      getHabosCoords(),
+      geocodeAddress(address)
+    ]);
+
+    const routeUrl=`https://router.project-osrm.org/route/v1/driving/${habos.lon},${habos.lat};${kunde.lon},${kunde.lat}?overview=false`;
+    const response=await fetch(routeUrl);
+    const data=await response.json();
+
+    if(!data.routes || !data.routes.length){
+      throw new Error('Route nicht gefunden');
+    }
+
+    const km=data.routes[0].distance/1000;
+    deliveryDistanceKm=km;
+
+    const i=deliveryZones.findIndex((zone,index)=>
+      km>=Number(zone.minKm) &&
+      (km<Number(zone.maxKm) ||
+      (index===deliveryZones.length-1 && km<=Number(zone.maxKm)))
+    );
+
+    if(i===-1){
+      deliveryZone.value='';
+      renderCheckoutSummary();
+      alert(`Diese Adresse liegt ca. ${km.toFixed(1)} km entfernt und außerhalb unseres Liefergebiets.`);
+      return false;
+    }
+
+    deliveryZone.value=String(i);
     deliveryFee=Number(deliveryZones[i].deliveryFee)||0;
     minimumDelivery=Number(deliveryZones[i].minimumOrder)||0;
+
+    renderCheckoutSummary();
+    return true;
+
+  }catch(error){
+    console.error(error);
+    deliveryZone.value='';
+    alert('Adresse konnte nicht geprüft werden. Bitte Straße, Hausnummer, PLZ und Ort vollständig eingeben.');
+    return false;
   }
-  renderCheckoutSummary();
 }
-deliveryZone.addEventListener('change',updateDeliveryZone);
+
+custAddress.addEventListener('blur',()=>{
+  if(orderType==='Lieferung' && clean(custAddress.value)){
+    updateDeliveryZone();
+  }
+});
 function openCheckout(){
   if(!cart.length){alert('Dein Warenkorb ist leer.');return}
   closeCart();
@@ -471,8 +544,10 @@ async function sendWhatsApp(){
 const name=clean(custName.value),address=clean(custAddress.value);
 if(!name){alert('Bitte Name eingeben.');return}
   if(orderType==='Lieferung'&&!address){alert('Bitte die Lieferadresse eingeben.');return}
-  if(orderType==='Lieferung'&&deliveryZone.value===''){alert('Bitte Lieferzone auswählen.');return}
-updateDeliveryZone();
+ if(orderType==='Lieferung'){
+  const ok=await updateDeliveryZone();
+  if(!ok) return;
+}
   const subtotal=cartSubtotal();
   if(orderType==='Lieferung'&&subtotal<minimumDelivery){
     alert(`Für diese Lieferzone beträgt der Mindestbestellwert ${euro(minimumDelivery)}.`);
