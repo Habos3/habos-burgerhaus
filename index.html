@@ -558,26 +558,53 @@ if(!name){alert('Bitte Name eingeben.');return}
   const orderNo='H'+Date.now().toString().slice(-6);
 const shortOrderNo=orderNo.slice(-3);
   const lines=[
-    '🍔 *HABOS BURGER HAUS – NEUE BESTELLUNG*',
+    '*HABOS BURGER HAUS*',
+'*NEUE BESTELLUNG*',
     `Bestellnummer: ${orderNo}`,
     '',
-    `*Bestellart:* ${orderType}`,
+    `*Bestellart:* ${orderType}`, 
     `*Name:* ${name}`,
    
   ];
-  if(orderType==='Lieferung') lines.push(`*Adresse:* ${address}`);
-  if(orderType==='Lieferung') lines.push(`*Lieferzone:* ${deliveryZone.options[deliveryZone.selectedIndex].text}`);
-  lines.push(`*Zeit:* ${custTime.value}`,`*Zahlung:* ${custPayment.value}`,'','*Bestellung:*');
-  cart.forEach(x=>{
-    lines.push(`• ${x.qty}× ${x.name} – ${euro(x.price*x.qty)}`);
-    lines.push(`  ${x.option}`);
-  });
-  lines.push('',`Warenwert: ${euro(subtotal)}`);
-  if(orderType==='Lieferung') lines.push(`Lieferkosten: ${euro(fee)}`);
-  lines.push(`*Gesamt: ${euro(total)}*`);
-  const note=clean(custNote.value);
-  if(note) lines.push('',`*Hinweis:* ${note}`);
-  lines.push('','Bitte Bestellung kurz bestätigen. Danke!');
+if(orderType==='Lieferung'){
+  lines.push(`ADRESSE: ${address}`);
+  lines.push(`ZONE: ${deliveryZone.options[deliveryZone.selectedIndex].text}`);
+}
+
+lines.push(
+  `ZEIT: ${custTime.value}`,
+  `ZAHLUNG: ${custPayment.value}`,
+  '',
+  '------------------------',
+  'BESTELLUNG',
+  '------------------------'
+);
+
+cart.forEach(x=>{
+  lines.push(`${x.qty}x ${x.name.toUpperCase()}`);
+
+  if(x.option){
+    x.option
+      .split(' · ')
+      .filter(Boolean)
+      .forEach(opt => lines.push(`  ${opt}`));
+  }
+
+  lines.push('');
+});
+
+lines.push('------------------------');
+
+if(orderType==='Lieferung'){
+  lines.push(`LIEFERKOSTEN: ${euro(fee)}`);
+}
+
+lines.push(`GESAMT: ${euro(total)}`);
+
+const note=clean(custNote.value);
+if(note){
+  lines.push('', 'HINWEIS:', note);
+}
   try {
   await fetch('/.netlify/functions/orders', {
     method: 'POST',
