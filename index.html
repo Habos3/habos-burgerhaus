@@ -354,6 +354,10 @@ function startConfig(i,j,mode){
     : 'Einzeln bestellen und nach Wunsch anpassen';
   menuOnly.style.display=mode==='menu'?'block':'none';
   customOnly.style.display=canCustomize(p)?'block':'none';
+  const mediumBurger = p.cat === 'Burger' && o[0].startsWith('Medium');
+
+extraChoices.style.display = mediumBurger ? 'none' : '';
+extraChoices.previousElementSibling.style.display = mediumBurger ? 'none' : '';
   sidePriceNote.textContent=mode==='menu'
     ? 'Süßkartoffel-Pommes oder Curly Fries kosten jeweils +1,00 €.'
     : '';
