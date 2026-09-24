@@ -150,6 +150,15 @@ footer{border-top:4px solid var(--yellow)}
 .adminlink{color:#777!important;font-size:12px}
 
 .product-photo{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+/* HABOS: editable lower-page about section. The original opening hero stays unchanged. */
+.about-habos{padding:64px max(20px,6vw);background:#111;color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}
+.about-habos[hidden]{display:none!important}
+.about-habos img{display:block;width:100%;max-height:430px;object-fit:cover;border-radius:22px;box-shadow:0 18px 48px #0008}
+.about-habos .about-label{color:#ffc21c;font-weight:900;text-transform:uppercase;letter-spacing:2px}
+.about-habos h2{font-size:clamp(30px,4vw,50px);margin:10px 0;color:#ffc21c}
+.about-habos p{color:#eee;font-size:18px;line-height:1.7;white-space:pre-line}
+.about-habos .about-foot{color:#ffc21c;font-size:15px;font-weight:700}
+@media(max-width:750px){.about-habos{grid-template-columns:1fr;padding:40px 20px}.about-habos img{max-height:330px}}
 </style>
 </head>
 <body>
@@ -171,12 +180,20 @@ footer{border-top:4px solid var(--yellow)}
     <div class="sale-pill"><strong>🥡 Abholung</strong><span>Schnell bestellen und im Restaurant abholen.</span></div>
     <div class="sale-pill"><strong>🛵 Lieferung</strong><span>Lieferbestellung ab 15,00 € Warenwert.</span></div>
   </div>
+  <div id="offersStatus" hidden style="margin:12px 0;padding:16px;border:1px solid #e8b72c;border-radius:14px;background:#1b1711;color:#ffd56b;font-weight:750"></div>
   <div class="tabs" id="tabs"></div><div class="grid" id="grid"></div>
 </section>
 <section class="info" id="service">
   <div><span>🍽️</span><h3>Restaurant</h3><p>Frisch zubereitet direkt bei HABOS genießen.</p></div>
   <div><span>🥡</span><h3>Abholung</h3><p>Bequem auswählen und später abholen.</p></div>
   <div><span>🛵</span><h3>Lieferung</h3><p>Eigener Lieferservice rund um Gelnhausen.</p></div>
+</section>
+<section class="about-habos" id="ueber-uns">
+  <div><div class="about-label">HABOS BURGER HAUS · GELNHAUSEN</div><h2 id="aboutTitle">Über uns</h2>
+    <p id="aboutText">Bei HABOS Burger Haus in Gelnhausen dreht sich alles um ehrlichen Burger-Geschmack: saftige Smash Burger, frische Zutaten und hausgemachte Soßen – frisch zubereitet mit Leidenschaft.</p>
+    <div class="about-foot" id="aboutFooter">Vor Ort genießen · Abholen · Lieferung</div>
+  </div>
+  <img id="aboutImage" src="/assets/habos-ueber-uns.jpg" alt="Burger von HABOS Burger Haus">
 </section>
 <footer><strong>HABOS BURGER HAUS</strong><p>Graslitzer Straße 2A · 63571 Gelnhausen · Tel. +49 6051 5330842 · Habosburger@outlook.com</p><p style="color:#aaa;font-size:13px">Burger, Smash Burger, Wraps und mehr in Gelnhausen – zur Abholung oder Lieferung bestellen.</p> <a class="adminlink" href="/admin.html">Admin</a></footer>
 
@@ -256,9 +273,11 @@ footer{border-top:4px solid var(--yellow)}
   </div>
 </div>
 
+<script src="/assets/offers.js"></script>
 <script>
 let products=[{"cat":"Burger","name":"Hamburger","desc":"Rindfleisch, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍔","options":[["Medium 60 g",4.4],["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Cheeseburger","desc":"Rindfleisch, Käse, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Medium 60 g",4.9],["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Chili Cheese Burger","desc":"Rindfleisch, Käse, Jalapeños und Chili-Cheese-Soße.","icon":"🌶️","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"BBQ Burger","desc":"Rindfleisch mit BBQ-Soße und Toppings nach Wahl.","icon":"🔥","options":[["Medium 60 g",5.4],["Classic 120 g",7.4],["Large 160 g",9.4]],"menu":true,"active":true},{"cat":"Burger","name":"Chicken Burger","desc":"Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.4],["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Crispy Chicken Burger","desc":"Knuspriges Chicken, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🍗","options":[["Classic 120 g",6.9],["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"Halloumi Burger","desc":"Halloumi, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🧀","options":[["Large 160 g",8.4]],"menu":true,"active":true},{"cat":"Burger","name":"Vegan Burger (Falafel)","desc":"Falafel, Salat, Tomate, Zwiebeln, Gurken und hausgemachte Soße.","icon":"🌱","options":[["Large 160 g",8.9]],"menu":true,"active":true},{"cat":"Burger","name":"HABOS Nacho-Burger","desc":"HABOS Burger mit Nachos und Toppings nach Wahl.","icon":"🍔","options":[["Large 160 g",9.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Hamburger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🍔","options":[["Smash 120 g",7.4],["Smash 180 g",9.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Cheeseburger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🧀","options":[["Smash 120 g",7.9],["Smash 180 g",10.9]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash Chili Cheese Burger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🌶️","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Smash Burger","name":"Smash BBQ Burger","desc":"Saftiger Smash Burger mit frischem Salat, Karamellzwiebeln und hausgemachter Soße.","icon":"🔥","options":[["Smash 120 g",8.4],["Smash 180 g",11.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Beef Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Chicken Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Crispy Chicken Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wraps","name":"Halloumi Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",6.9]],"menu":true,"active":true},{"cat":"Wraps","name":"Falafel Wrap","desc":"Frisch gerollter Wrap mit Salat und HABOS-Soße.","icon":"🌯","options":[["Standard",7.4]],"menu":true,"active":true},{"cat":"Wings","name":"HABOS Hot Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Garlic Parmesan Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"BBQ Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Sweet Chili Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Wings","name":"Teriyaki Wings","desc":"Knusprige Chicken Wings mit ausgewählter Soße.","icon":"🍗","options":[["6 Stück",4.9],["12 Stück",8.9],["18 Stück",12.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Pommes","desc":"Goldgelb und knusprig.","icon":"🍟","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Süßkartoffeln","desc":"Knusprige Süßkartoffel-Pommes.","icon":"🍠","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Curly Fries","desc":"Würzige Kartoffelspiralen.","icon":"🍟","options":[["Portion",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Onion Rings","desc":"Knusprige Zwiebelringe.","icon":"🧅","options":[["7 Stück",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Mozzarella Sticks","desc":"Knusprige Mozzarella Sticks.","icon":"🧀","options":[["7 Stück",4.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Nachos","desc":"Mit 1 Dip nach Wahl.","icon":"🔺","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Coleslaw","desc":"Hausgemachter Coleslaw.","icon":"🥗","options":[["Portion",3.9]],"menu":false,"active":true},{"cat":"Beilagen","name":"Fingerfood","desc":"3 Nuggets, 3 Mozzarella Sticks und 3 Onion Rings.","icon":"🍗","options":[["Portion",5.9]],"menu":false,"active":true},{"cat":"Dips","name":"Joppie","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Sour Cream","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"BBQ","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Aioli","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Trüffel Mayo","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Chili Mayo","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.0]],"menu":false,"active":true},{"cat":"Dips","name":"Chili Cheese","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Guacamole","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",1.5]],"menu":false,"active":true},{"cat":"Dips","name":"Ketchup","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Dips","name":"Mayonnaise","desc":"HABOS Dip.","icon":"🥣","options":[["1 Dip",0.5]],"menu":false,"active":true},{"cat":"Getränke","name":"Soft Drinks","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",2.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Wasser","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.9]],"menu":false,"active":true},{"cat":"Getränke","name":"Ayran","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.5]],"menu":false,"active":true},{"cat":"Getränke","name":"Capri-Sun","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",1.0]],"menu":false,"active":true},{"cat":"Getränke","name":"Homemade Lemonade","desc":"Gekühlt serviert.","icon":"🥤","options":[["Getränk",3.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Hamburger Kinder Menü","desc":"Hamburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Cheeseburger Kinder Menü","desc":"Cheeseburger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.9]],"menu":false,"active":true},{"cat":"Kinder Menü","name":"Nugget Burger Kinder Menü","desc":"Nugget Burger mit Pommes und Capri-Sun.","icon":"🧒","options":[["Komplettes Kinder Menü",6.5]],"menu":false,"active":true}];
 let menuPrice=4.50;
+let currentOfferSettings={offers:{happyHour:{enabled:false},student:{enabled:false}}};
 let liveSettings={
   deliveryFee:2.50,
   minimumDelivery:15.00,
@@ -286,10 +305,26 @@ function iconMarkup(p){
   return isSoftDrink(p)?'<span class="cola-glass" aria-label="Getränkeglas"></span>':p.icon;
 }
 function renderTabs(){tabs.innerHTML=cats.map(c=>`<button data-cat="${c}" class="tab ${c===active?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('')}
+function offeredPrice(p,option,base){return HabosOffers.unitPrice(currentOfferSettings,p,option,base,orderType)}
+function offerLabel(p,option,base){const result=offeredPrice(p,option,base);return result.offer?`<small style="color:#53c976">Einzelangebot: ${result.offer} · ${euro(result.price)} statt ${euro(base)} (bei ${orderType})</small>`:''}
+function refreshOfferBanner(){
+ const box=document.getElementById('offersStatus');
+ const settings=currentOfferSettings?.offers||{};
+ const active=[['student','🎓 Schüler-Angebot'],['happyHour','⏰ Happy Hour']].filter(([k])=>HabosOffers.inSchedule(settings[k]));
+ box.hidden=!active.length;
+ box.textContent=active.map(([k,label])=>`${label}: ${settings[k].category} ${settings[k].size} für ${euro(settings[k].price)} (${settings[k].orderType}, ${settings[k].start}–${settings[k].end} Uhr)`).join(' · ');
+}
+function refreshCartOfferPrices(){
+ cart.forEach(x=>{
+   if(!x.promoProduct)return;
+   const result=offeredPrice(x.promoProduct,x.promoSize,x.basePrice);
+   x.price=result.price+(x.extrasCost||0);x.offer=result.offer;
+ });
+}
 function render(){
   const list=products.filter(p=>p.cat===active && p.active!==false);
   grid.innerHTML=list.map(p=>{
-    const i=products.indexOf(p),min=Math.min(...p.options.map(o=>o[1]));
+    const i=products.indexOf(p),min=Math.min(...p.options.map(o=>offeredPrice(p,o[0],o[1]).price));
     return `<article class="card ${p.soldOut?'soldout':''}" onclick="${p.soldOut?'':`showProduct(${i})`}"><div class="emoji">${iconMarkup(p)}</div><div class="card-copy"><h3>${p.name}</h3><p>${p.desc}</p><div class="from">${p.soldOut?'Heute ausverkauft':'ab '+euro(min)}</div></div><button class="choose" aria-label="Auswählen">${p.soldOut?'×':'›'}</button></article>`;
   }).join('');
 }
@@ -324,7 +359,7 @@ function showProduct(i){
         : '';
       const classes=menuButton?'optionactions':'optionactions single-only';
       return `<div class="optionrow">
-        <div class="optiontop"><b>${o[0]}</b><strong>${euro(o[1])}</strong></div>
+        <div class="optiontop"><b>${o[0]}</b><strong>${euro(offeredPrice(p,o[0],o[1]).price)}</strong></div>${offerLabel(p,o[0],o[1])}
         <div class="${classes}">
           <button class="actionbtn" onclick="startConfig(${i},${j},'single')">Einzeln bestellen</button>
           ${menuButton}
@@ -332,7 +367,7 @@ function showProduct(i){
       </div>`;
     }).join('');
   } else {
-    productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="addSingleDirect(${i},${j})"><b>${o[0]}</b><strong>${euro(o[1])}</strong></button>`).join('');
+    productOptions.innerHTML=p.options.map((o,j)=>`<button class="simpleoption" onclick="addSingleDirect(${i},${j})"><b>${o[0]}</b><strong>${euro(offeredPrice(p,o[0],o[1]).price)}</strong></button>`).join('');
   }
   modal.classList.add('open');
 }
@@ -340,7 +375,8 @@ function closeModal(){modal.classList.remove('open')}
 
 function addSingleDirect(i,j){
   const p=products[i],o=p.options[j];
-  addCart({key:p.name+'|'+o[0],name:p.name,option:o[0],price:o[1]});
+  const price=offeredPrice(p,o[0],o[1]);
+   addCart({key:p.name+'|'+o[0],name:p.name,option:o[0],price:price.price,basePrice:o[1],offer:price.offer,promoProduct:{cat:p.cat,name:p.name},promoSize:o[0]});
 }
 function startConfig(i,j,mode){
   const p=products[i],o=p.options[j];
@@ -354,7 +390,7 @@ function startConfig(i,j,mode){
     : 'Einzeln bestellen und nach Wunsch anpassen';
   menuOnly.style.display=mode==='menu'?'block':'none';
   customOnly.style.display=canCustomize(p)?'block':'none';
-  const mediumBurger = p.cat === 'Burger' && o[0].startsWith('Medium');
+  const mediumBurger = liveSettings.mediumToppings !== true && p.cat === 'Burger' && o[0].startsWith('Medium');
 
 extraChoices.style.display = mediumBurger ? 'none' : '';
 extraChoices.previousElementSibling.style.display = mediumBurger ? 'none' : '';
@@ -383,7 +419,7 @@ function toggleRemoval(x){
 }
 function currentPrice(){
   if(!pending) return 0;
-  let price=pending.base;
+  let price=pending.mode==='single'?offeredPrice(products[pending.i],pending.size,pending.base).price:pending.base;
   if(pending.mode==='menu'){
     price+=menuPrice;
     const side=sides.find(x=>x.name===selectedSide);
@@ -408,15 +444,17 @@ function confirmConfigured(){
   if(selectedExtras.length) details.push('Extras: '+selectedExtras.join(', '));
   if(selectedRemovals.length) details.push(selectedRemovals.join(', '));
   const key=[pending.name,...details].join('|');
-  addCart({key,name:pending.name,option:details.join(' · '),price:currentPrice()});
+  const promo=pending.mode==='single'?offeredPrice(products[pending.i],pending.size,pending.base):{price:pending.base,offer:null};
+   addCart({key,name:pending.name,option:details.join(' · '),price:currentPrice(),basePrice:pending.base,offer:promo.offer,promoProduct:pending.mode==='single'?{cat:pending.cat,name:pending.name}:null,promoSize:pending.size,extrasCost:selectedExtras.reduce((sum,n)=>sum+(extras.find(x=>x.name===n)?.price||0),0)});
 }
 function addCart(item){
   let x=cart.find(x=>x.key===item.key);x?x.qty++:cart.push({...item,qty:1});
   closeModal();updateCart();openCart();
 }
 function updateCart(){
-  count.textContent=cart.reduce((s,x)=>s+x.qty,0);
-  cartitems.innerHTML=cart.length?cart.map((x,i)=>`<div class="cartitem"><div><b>${x.name}</b><br><small>${x.option} · ${euro(x.price)}</small></div><div class="qty"><button onclick="qty(${i},-1)">−</button><b>${x.qty}</b><button onclick="qty(${i},1)">+</button></div></div>`).join(''):'<p style="color:#777;padding:20px 0">Der Warenkorb ist leer.</p>';
+   refreshCartOfferPrices();refreshOfferBanner();
+   count.textContent=cart.reduce((s,x)=>s+x.qty,0);
+  cartitems.innerHTML=cart.length?cart.map((x,i)=>`<div class="cartitem"><div><b>${x.name}</b><br><small>${x.option}${x.offer?' · '+x.offer:''} · ${euro(x.price)}</small></div><div class="qty"><button onclick="qty(${i},-1)">−</button><b>${x.qty}</b><button onclick="qty(${i},1)">+</button></div></div>`).join(''):'<p style="color:#777;padding:20px 0">Der Warenkorb ist leer.</p>';
   total.textContent=euro(cart.reduce((s,x)=>s+x.price*x.qty,0));
 }
 function qty(i,n){cart[i].qty+=n;if(cart[i].qty<=0)cart.splice(i,1);updateCart()}
@@ -434,10 +472,12 @@ let minimumDelivery=15.00;
 ];
 
 function cartSubtotal(){
+  refreshCartOfferPrices();
   return cart.reduce((sum,x)=>sum+x.price*x.qty,0);
 }
 function setOrderType(type){
   orderType=type;
+  refreshCartOfferPrices();render();
   pickupBtn.classList.toggle('active',type==='Abholung');
   deliveryBtn.classList.toggle('active',type==='Lieferung');
   addressLabel.style.display=type==='Lieferung'?'grid':'none';
@@ -537,7 +577,7 @@ function closeCheckout(){orderCheckout.classList.remove('open')}
 function renderCheckoutSummary(){
   const subtotal=cartSubtotal();
   const fee=orderType==='Lieferung'?deliveryFee:0;
-  checkoutItems.innerHTML=cart.map(x=>`<div class="order-summary-row"><span>${x.qty}× ${x.name}<small style="display:block;color:#777">${x.option}</small></span><strong>${euro(x.price*x.qty)}</strong></div>`).join('');
+  checkoutItems.innerHTML=cart.map(x=>`<div class="order-summary-row"><span>${x.qty}× ${x.name}<small style="display:block;color:#777">${x.option}${x.offer?' · '+x.offer:''}</small></span><strong>${euro(x.price*x.qty)}</strong></div>`).join('');
   checkoutSubtotal.textContent=euro(subtotal);
   checkoutDelivery.textContent=euro(fee);
   deliveryRow.style.display=orderType==='Lieferung'?'flex':'none';
@@ -585,7 +625,7 @@ lines.push(
 );
 
 cart.forEach(x=>{
-  lines.push(`${x.qty}x ${x.name.toUpperCase()}`);
+  lines.push(`${x.qty}x ${x.name.toUpperCase()} · ${euro(x.price)} / Stück`);
 
   if(x.option){
     x.option
@@ -634,11 +674,21 @@ if(note){
   window.open(url,'_blank');
 }
 
+function applyAbout(cfg){
+  const a=cfg?.homepage?.about||{};
+  document.getElementById('ueber-uns').hidden=a.enabled===false;
+  document.getElementById('aboutTitle').textContent=a.title||'Über uns';
+  document.getElementById('aboutText').textContent=a.text||'Bei HABOS Burger Haus in Gelnhausen dreht sich alles um ehrlichen Burger-Geschmack: saftige Smash Burger, frische Zutaten und hausgemachte Soßen – frisch zubereitet mit Leidenschaft.';
+  document.getElementById('aboutFooter').textContent=a.footer||'Vor Ort genießen · Abholen · Lieferung';
+  document.getElementById('aboutImage').src=a.image||'/assets/habos-ueber-uns.jpg';
+}
 async function loadLiveCatalog(){
   try{
     const r=await fetch('/.netlify/functions/catalog',{cache:'no-store'});
     if(!r.ok) throw new Error('catalog');
     const cfg=await r.json();
+    applyAbout(cfg);
+     if(cfg.settings?.offers)currentOfferSettings={offers:cfg.settings.offers};
     if(Array.isArray(cfg.products)) products=cfg.products;
     if(cfg.settings){
       liveSettings={...liveSettings,...cfg.settings};
@@ -656,8 +706,17 @@ async function loadLiveCatalog(){
     cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.cat))];
     if(!cats.includes(active)) active=cats[0]||'Burger';
   }catch(e){}
-  renderTabs();render();updateCart();
+  renderTabs();render();updateCart();refreshOfferBanner();
 }
 loadLiveCatalog();
+// Für Kunden, die den Shop vor Beginn einer Aktion geöffnet haben: beim Minutenwechsel neu prüfen.
+let lastOfferMinute=HabosOffers.berlinClock(new Date()).minutes;
+setInterval(()=>{
+  const nowMinute=HabosOffers.berlinClock(new Date()).minutes;
+  if(nowMinute===lastOfferMinute)return;
+  lastOfferMinute=nowMinute;
+  render();updateCart();
+  if(orderCheckout.classList.contains('open'))renderCheckoutSummary();
+},10000);
 </script>
 </body></html>

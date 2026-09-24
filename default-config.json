@@ -726,16 +726,85 @@
   "settings": {
     "menuPrice": 4.5,
     "deliveryFee": 2.5,
-"minimumDelivery": 15.0,
+    "minimumDelivery": 15.0,
     "deliveryZones": [
-  { "minKm": 0, "maxKm": 3, "minimumOrder": 15, "deliveryFee": 1.5 },
-  { "minKm": 3, "maxKm": 6, "minimumOrder": 20, "deliveryFee": 2.0 },
-  { "minKm": 6, "maxKm": 9, "minimumOrder": 30, "deliveryFee": 2.5 },
-  { "minKm": 9, "maxKm": 12, "minimumOrder": 50, "deliveryFee": 3.5 }
-],
+      {
+        "minKm": 0,
+        "maxKm": 3,
+        "minimumOrder": 15,
+        "deliveryFee": 1.5
+      },
+      {
+        "minKm": 3,
+        "maxKm": 6,
+        "minimumOrder": 20,
+        "deliveryFee": 2.0
+      },
+      {
+        "minKm": 6,
+        "maxKm": 9,
+        "minimumOrder": 30,
+        "deliveryFee": 2.5
+      },
+      {
+        "minKm": 9,
+        "maxKm": 12,
+        "minimumOrder": 50,
+        "deliveryFee": 3.5
+      }
+    ],
     "phone": "4960515330842",
     "displayPhone": "+49 6051 5330842",
     "email": "Habosburger@outlook.com",
-    "address": "Graslitzer Straße 2A, 63571 Gelnhausen"
+    "address": "Graslitzer Straße 2A, 63571 Gelnhausen",
+    "mediumToppings": false,
+    "offers": {
+      "happyHour": {
+        "enabled": false,
+        "start": "14:00",
+        "end": "17:00",
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0
+        ],
+        "category": "Burger",
+        "size": "Medium",
+        "products": "",
+        "price": 3.9,
+        "orderType": "Abholung"
+      },
+      "student": {
+        "enabled": false,
+        "start": "12:30",
+        "end": "13:30",
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0
+        ],
+        "category": "Burger",
+        "size": "Medium",
+        "products": "",
+        "price": 2.9,
+        "orderType": "Abholung"
+      }
+    }
+  },
+  "homepage": {
+    "about": {
+      "enabled": true,
+      "title": "Über uns",
+      "text": "Bei HABOS Burger Haus in Gelnhausen dreht sich alles um ehrlichen Burger-Geschmack: saftige Smash Burger, frische Zutaten und hausgemachte Soßen – frisch zubereitet mit Leidenschaft.",
+      "footer": "Vor Ort genießen · Abholen · Lieferung"
+    }
   }
 }

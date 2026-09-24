@@ -36,7 +36,7 @@ textarea{min-height:80px;resize:vertical}
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandmark">H</div><div>HABOS Admin Pro<div class="muted" style="color:#aaa">Zentrale Steuerung</div></div></div>
+ <div class="brand"><div>HABOS Admin Pro<div class="muted" style="color:#aaa">Zentrale Steuerung</div></div></div>
  <a href="/" target="_blank">Website ansehen</a>
 </header>
 <div class="wrap">
@@ -54,6 +54,51 @@ textarea{min-height:80px;resize:vertical}
   <div class="metric"><span>Kategorien</span><strong id="mCats">0</strong></div>
   <div class="metric"><span>Ausverkauft</span><strong id="mSold">0</strong></div>
   <div class="metric"><span>Unsichtbar</span><strong id="mHidden">0</strong></div>
+ </section>
+
+ <section class="panel" id="aboutAdmin">
+  <h2>🏠 Startseite – Über uns</h2>
+  <p class="muted">Der obere HABOS-Startbereich mit dem gelben Button bleibt unverändert. Hier bearbeitest du nur den zusätzlichen Über-uns-Bereich weiter unten.</p>
+  <div class="switches"><label class="switch">Über uns anzeigen <input id="aboutEnabled" type="checkbox"></label><label class="switch">Toppings bei Medium-Burgern erlauben <input id="mediumToppings" type="checkbox"></label></div>
+  <div class="grid2" style="margin-top:14px">
+   <label class="field">Überschrift<input id="aboutTitleInput" placeholder="Über uns"></label>
+   <label class="field">Kurze Abschlusszeile<input id="aboutFooterInput" placeholder="Vor Ort genießen · Abholen · Lieferung"></label>
+  </div>
+  <label class="field" style="margin-top:12px">Über-uns-Text<textarea id="aboutTextInput" rows="5"></textarea></label>
+  <label class="field" style="margin-top:12px">Burgerbild austauschen<input type="file" id="aboutImageInput" accept="image/*"></label>
+  <div class="toolbar"><img id="aboutPreview" alt="Aktuelles Über-uns-Bild" src="/assets/habos-ueber-uns.jpg" style="max-width:330px;width:100%;height:170px;object-fit:cover;border-radius:12px"><button class="btn soft" id="aboutImageReset" type="button">Originalbild wiederherstellen</button></div>
+  <p class="muted">Bild und Text werden erst durch „Alle Änderungen speichern“ auf der Webseite übernommen.</p>
+ </section>
+ <section class="panel" id="offersAdmin">
+   <h2>⏰ Happy Hour & Schüler-Angebote</h2>
+   <p class="muted">Aktionspreise gelten automatisch nach deutscher Ortszeit (Europe/Berlin). Beide Angebote sind zunächst AUS. Preise hier sind Festpreise pro einzelnem Burger, keine Menüs oder Extras. Der aktuelle Preis des Produkts bleibt außerhalb des Angebots erhalten.</p>
+   <div class="switches" style="margin-top:12px">
+     <label class="switch">🍔 Happy Hour aktiv <input id="hhEnabled" type="checkbox"></label>
+     <label class="switch">🎓 Schüler-Angebot aktiv <input id="stEnabled" type="checkbox"></label>
+   </div>
+   <h3>🍔 Happy Hour</h3>
+   <div class="grid3">
+    <label class="field">Von<input id="hhStart" type="time"></label>
+    <label class="field">Bis<input id="hhEnd" type="time"></label>
+    <label class="field">Festpreis pro Burger €<input id="hhPrice" type="number" min="0" step="0.01"></label>
+    <label class="field">Kategorie<select id="hhCategory"><option>Burger</option><option>Smash Burger</option><option>Wraps</option></select></label>
+    <label class="field">Größe beginnt mit<input id="hhSize" placeholder="Medium / Classic / Large / Smash"></label>
+    <label class="field">Gültig bei<select id="hhOrderType"><option>Abholung</option><option>Lieferung</option><option>Beides</option></select></label>
+   </div>
+   <label class="field">Produktnamen (kommagetrennt; leer = alle passenden)<input id="hhProducts" placeholder="z. B. Hamburger, Cheeseburger"></label>
+   <div class="field">Wochentage<div class="switches" id="hhDays" style="grid-template-columns:repeat(7,minmax(0,1fr))"></div></div>
+   <h3>🎓 Schüler-Angebot</h3>
+   <div class="grid3">
+    <label class="field">Von<input id="stStart" type="time"></label>
+    <label class="field">Bis<input id="stEnd" type="time"></label>
+    <label class="field">Festpreis pro Burger €<input id="stPrice" type="number" min="0" step="0.01"></label>
+    <label class="field">Kategorie<select id="stCategory"><option>Burger</option><option>Smash Burger</option><option>Wraps</option></select></label>
+    <label class="field">Größe beginnt mit<input id="stSize" placeholder="Medium"></label>
+    <label class="field">Gültig bei<select id="stOrderType"><option>Abholung</option><option>Lieferung</option><option>Beides</option></select></label>
+   </div>
+   <label class="field">Produktnamen (kommagetrennt; leer = alle passenden)<input id="stProducts" placeholder="z. B. Hamburger, Cheeseburger"></label>
+   <div class="field">Wochentage<div class="switches" id="stDays" style="grid-template-columns:repeat(7,minmax(0,1fr))"></div></div>
+   <p class="muted">Hinweis: „Abholung“ ist eine Webseiten-Bestellart. Ein Angebot ausschließlich bei Verzehr im Restaurant kann die Webseite nicht selbst prüfen. Das separate Schüler-Menü aus deiner Speisekarte bleibt wie bisher verwaltbar.</p>
  </section>
 
  <section class="panel">
@@ -150,6 +195,12 @@ function markSaved(){dirty=false;$('dirtyLabel').textContent='Alles gespeichert'
 function ensureStructure(){
  cfg.settings=cfg.settings||{};
  cfg.customization=cfg.customization||{};
+ cfg.homepage=cfg.homepage||{};
+ cfg.homepage.about={enabled:true,title:'Über uns',text:'Bei HABOS Burger Haus in Gelnhausen dreht sich alles um ehrlichen Burger-Geschmack: saftige Smash Burger, frische Zutaten und hausgemachte Soßen – frisch zubereitet mit Leidenschaft.',footer:'Vor Ort genießen · Abholen · Lieferung',...cfg.homepage.about};
+  cfg.settings.mediumToppings=cfg.settings.mediumToppings===true;
+  cfg.settings.offers=cfg.settings.offers||{};
+  cfg.settings.offers.happyHour={enabled:false,start:'14:00',end:'17:00',days:[1,2,3,4,5,6,0],category:'Burger',size:'Medium',products:'',price:3.9,orderType:'Abholung',...cfg.settings.offers.happyHour};
+  cfg.settings.offers.student={enabled:false,start:'12:30',end:'13:30',days:[1,2,3,4,5,6,0],category:'Burger',size:'Medium',products:'',price:2.9,orderType:'Abholung',...cfg.settings.offers.student};
  cfg.settings.pickupEnabled=cfg.settings.pickupEnabled!==false;
  cfg.settings.deliveryEnabled=cfg.settings.deliveryEnabled===true;
  cfg.settings.paymentMethods={cash:true,card:true,online:false,...(cfg.settings.paymentMethods||{})};
@@ -177,8 +228,46 @@ function categories(){
  const used=[...new Set((cfg.products||[]).map(p=>p.cat).filter(Boolean))];
  return [...cfg.settings.categoryOrder.filter(Boolean),...used.filter(c=>!cfg.settings.categoryOrder.includes(c))];
 }
+const OFFER_DAYS=[['Mo',1],['Di',2],['Mi',3],['Do',4],['Fr',5],['Sa',6],['So',0]];
+function fillOffers(){
+  [['hh','happyHour'],['st','student']].forEach(([id,key])=>{
+    const a=cfg.settings.offers[key];
+    $(''+id+'Enabled').checked=a.enabled===true;
+    for(const [k,v] of [['Start','start'],['End','end'],['Price','price'],['Category','category'],['Size','size'],['Products','products'],['OrderType','orderType']]) $(id+k).value=a[v];
+    const box=$(id+'Days');
+    box.innerHTML=OFFER_DAYS.map(([label,n])=>`<label style="display:grid;gap:7px;justify-items:center;font-size:12px">${label}<input type="checkbox" data-offer-day="${n}" ${a.days.includes(n)?'checked':''} style="width:auto"></label>`).join('');
+    box.querySelectorAll('input').forEach(el=>el.addEventListener('change',markDirty));
+  });
+}
+function syncOffers(){
+  [['hh','happyHour'],['st','student']].forEach(([id,key])=>{
+    const a=cfg.settings.offers[key];
+    a.enabled=$(id+'Enabled').checked;
+    for(const [k,v] of [['Start','start'],['End','end'],['Category','category'],['Size','size'],['Products','products'],['OrderType','orderType']]) a[v]=$(id+k).value.trim();
+    a.price=Number($(id+'Price').value);
+    a.days=[...$(id+'Days').querySelectorAll('input:checked')].map(x=>Number(x.dataset.offerDay));
+  });
+}
+function validateOffers(){
+  for(const [label,o] of [['Happy Hour',cfg.settings.offers.happyHour],['Schüler-Angebot',cfg.settings.offers.student]]){
+    if(!o.enabled)continue;
+    if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(o.start)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(o.end)||o.start===o.end){alert(label+': Bitte gültige, verschiedene Start-/Endzeiten eingeben.');return false}
+    if(!o.days.length){alert(label+': Bitte mindestens einen Wochentag auswählen.');return false}
+    if(!o.size){alert(label+': Bitte eine Burgergröße eingeben.');return false}
+    if(!Number.isFinite(o.price)||o.price<0){alert(label+': Bitte einen gültigen Aktionspreis eingeben.');return false}
+  }
+  return true;
+}
 function fillSettings(){
  ensureStructure();
+ const about=cfg.homepage.about;
+ $('aboutEnabled').checked=about.enabled!==false;
+ $('mediumToppings').checked=cfg.settings.mediumToppings===true;
+ $('aboutTitleInput').value=about.title||'';
+ $('aboutTextInput').value=about.text||'';
+ $('aboutFooterInput').value=about.footer||'';
+  $('aboutPreview').src=about.image||'/assets/habos-ueber-uns.jpg';
+  fillOffers();
  $('menuPrice').value=cfg.settings.menuPrice??4.5;$('deliveryFee').value=cfg.settings.deliveryFee??2.5;$('minimumDelivery').value=cfg.settings.minimumDelivery??15;
  $('zone1Min').value=cfg.settings.deliveryZones[0].minimumOrder;
 $('zone1Fee').value=cfg.settings.deliveryZones[0].deliveryFee;
@@ -195,6 +284,9 @@ $('zone4Fee').value=cfg.settings.deliveryZones[3].deliveryFee;
  $('topBanner').value=cfg.settings.topBanner||'HABOS DIREKTBESTELLUNG · BESTELLUNG PER WHATSAPP';
 }
 function syncFields(){
+ cfg.homepage.about={...cfg.homepage.about,enabled:$('aboutEnabled').checked,title:$('aboutTitleInput').value.trim(),text:$('aboutTextInput').value.trim(),footer:$('aboutFooterInput').value.trim()};
+ cfg.settings.mediumToppings=$('mediumToppings').checked;
+ syncOffers();
  cfg.settings.deliveryZones=[
  {minKm:0,maxKm:3,minimumOrder:Number($('zone1Min').value)||0,deliveryFee:Number($('zone1Fee').value)||0},
  {minKm:3,maxKm:6,minimumOrder:Number($('zone2Min').value)||0,deliveryFee:Number($('zone2Fee').value)||0},
@@ -245,9 +337,21 @@ function productCard(p,i){
 function renderProducts(){const q=searchTerm.toLowerCase();const list=cfg.products.map((p,i)=>({p,i})).filter(x=>x.p.cat===activeCat&&(!q||(x.p.name||'').toLowerCase().includes(q)||(x.p.desc||'').toLowerCase().includes(q)));$('products').innerHTML=list.length?list.map(x=>productCard(x.p,x.i)).join(''):'<div class="muted">Keine Produkte in dieser Kategorie.</div>'}
 async function setImage(i,file){if(!file)return;const bmp=await createImageBitmap(file),max=650,s=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bmp.width*s));c.height=Math.max(1,Math.round(bmp.height*s));c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);cfg.products[i].image=c.toDataURL('image/webp',.78);bmp.close?.();markDirty();renderProducts()}
 function addProduct(){const cat=activeCat||categories()[0]||'Burger';cfg.products.push({cat,name:'Neues Produkt',desc:'',icon:'🍔',options:[['Standard',0]],menu:false,active:true,soldOut:false});activeCat=cat;markDirty();renderAll()}
-async function save(){syncFields();ensureStructure();if(!cfg.settings.paymentMethods.cash&&!cfg.settings.paymentMethods.card&&!cfg.settings.paymentMethods.online){alert('Mindestens eine Zahlungsart muss aktiv sein.');return};if(!cfg.settings.pickupEnabled&&!cfg.settings.deliveryEnabled){alert('Mindestens Abholung oder Lieferung muss aktiv sein.');return}
+async function save(){syncFields();ensureStructure();if(!validateOffers())return;if(!cfg.settings.paymentMethods.cash&&!cfg.settings.paymentMethods.card&&!cfg.settings.paymentMethods.online){alert('Mindestens eine Zahlungsart muss aktiv sein.');return};if(!cfg.settings.pickupEnabled&&!cfg.settings.deliveryEnabled){alert('Mindestens Abholung oder Lieferung muss aktiv sein.');return}
  try{const r=await fetch('/.netlify/functions/catalog',{method:'POST',headers:{'content-type':'application/json','x-admin-password':password},body:JSON.stringify(cfg)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Speichern fehlgeschlagen');markSaved();show($('saveStatus'),'Gespeichert. Kundenseite aktualisiert.','ok')}catch(e){show($('saveStatus'),e.message,'err')}
 }
+$('aboutImageInput').addEventListener('change',async function(){
+  const file=this.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')){alert('Bitte ein Bild auswählen.');return}
+  try{
+    const bmp=await createImageBitmap(file),ratio=Math.min(1,1200/Math.max(bmp.width,bmp.height));
+    const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bmp.width*ratio));canvas.height=Math.max(1,Math.round(bmp.height*ratio));
+    canvas.getContext('2d').drawImage(bmp,0,0,canvas.width,canvas.height);bmp.close?.();
+    cfg.homepage.about.image=canvas.toDataURL('image/jpeg',.78);
+    $('aboutPreview').src=cfg.homepage.about.image;markDirty();
+  }catch(e){alert('Bild konnte nicht verarbeitet werden. Bitte JPG oder PNG probieren.')}
+});
+$('aboutImageReset').onclick=()=>{delete cfg.homepage.about.image;$('aboutPreview').src='/assets/habos-ueber-uns.jpg';$('aboutImageInput').value='';markDirty()};
 $('loginBtn').onclick=login;$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('addProductBtn').onclick=addProduct;$('addCategoryBtn').onclick=addCategory;$('saveBottomBtn').onclick=save;$('searchInput').addEventListener('input',e=>{searchTerm=e.target.value;renderProducts()});
 document.querySelectorAll('input,select,textarea').forEach(el=>{if(!['pw','searchInput','newCategoryName'].includes(el.id))el.addEventListener('input',markDirty)});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
